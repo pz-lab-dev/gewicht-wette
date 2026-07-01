@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GewichtWette</title>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --green: #1baf7a; --green-dark: #0f6e56; --green-light: #e1f5ee; --green-border: #9fe1cb;
+    --red: #e34948; --amber: #eda100; --blue: #2a78d6;
+    --bg: #f5f4f0; --surface: #ffffff; --surface2: #f9f8f5;
+    --border: rgba(0,0,0,0.10); --border-strong: rgba(0,0,0,0.18);
+    --text: #0b0b0b; --text2: #52514e; --text3: #898781;
+    --radius: 8px; --shadow: 0 1px 4px rgba(0,0,0,0.07);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #141413; --surface: #1e1e1c; --surface2: #252523;
+      --border: rgba(255,255,255,0.10); --border-strong: rgba(255,255,255,0.18);
+      --text: #f0ede6; --text2: #c3c2b7; --text3: #898781;
+      --green-light: #04342c; --green-border: #085041;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+  .hidden { display: none !important; }
+
+  /* LOGIN */
+  #loginScreen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; gap: 24px; }
+  .login-logo { font-size: 36px; font-weight: 600; letter-spacing: -1.5px; }
+  .login-logo span { color: var(--green); }
+  .login-sub { font-size: 14px; color: var(--text3); margin-top: -16px; }
+  .login-card { background: var(--surface); border: 0.5px solid var(--border); border-radius: 16px; padding: 28px 32px; width: 320px; display: flex; flex-direction: column; gap: 14px; box-shadow: var(--shadow); }
+  .login-card h2 { font-size: 16px; font-weight: 600; }
+  .field label { font-size: 12px; color: var(--text3); display: block; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.4px; }
+  .field select, .field input { width: 100%; padding: 9px 12px; border: 0.5px solid var(--border-strong); border-radius: var(--radius); background: var(--surface2); color: var(--text); font-size: 14px; outline: none; transition: border-color .15s; }
+  .field select:focus, .field input:focus { border-color: var(--green); }
+  .btn-green { width: 100%; padding: 11px; background: var(--green); color: #fff; border: none; border-radius: var(--radius); font-size: 14px; font-weight: 600; cursor: pointer; transition: background .15s; }
+  .btn-green:hover { background: var(--green-dark); }
+  .err { color: var(--red); font-size: 13px; text-align: center; }
+
+  /* TOPBAR */
+  .topbar { display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; border-bottom: 0.5px solid var(--border); background: var(--surface); position: sticky; top: 0; z-index: 10; }
+  .topbar-logo { font-size: 17px; font-weight: 700; letter-spacing: -0.5px; }
+  .topbar-logo span { color: var(--green); }
+  .topbar-right { display: flex; align-items: center; gap: 10px; }
+  .user-pill { font-size: 12px; font-weight: 600; background: var(--green-light); color: var(--green-dark); padding: 4px 10px; border-radius: 20px; border: 0.5px solid var(--green-border); }
+  .logout-btn { font-size: 12px; color: var(--text3); cursor: pointer; padding: 5px 10px; border-radius: var(--radius); border: 0.5px solid var(--border-strong); background: transparent; transition: background .15s; }
+  .logout-btn:hover { background: var(--surface2); }
+
+  /* COUNTDOWN */
+  .countdown-bar { display: flex; align-items: center; justify-content: space-between; padding: 10px 20px; background: var(--surface2); border-bottom: 0.5px solid var(--border); flex-wrap: wrap; gap: 8px; }
+  .cd-left { display: flex; flex-direction: column; gap: 1px; }
+  .cd-label { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; }
+  .cd-date { font-size: 13px; font-weight: 600; color: var(--text); }
+  .cd-units { display: flex; align-items: center; gap: 6px; }
+  .cd-block { text-align: center; min-width: 40px; }
+  .cd-num { font-size: 22px; font-weight: 700; line-height: 1; color: var(--text); font-variant-numeric: tabular-nums; }
+  .cd-unit { font-size: 9px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.4px; margin-top: 1px; }
+  .cd-sep { font-size: 18px; color: var(--border-strong); margin-bottom: 8px; }
+  .cd-today { font-size: 13px; font-weight: 600; color: var(--green); background: var(--green-light); padding: 5px 14px; border-radius: 20px; border: 0.5px solid var(--green-border); }
+
+  /* TABS */
+  .tabs { display: flex; border-bottom: 0.5px solid var(--border); background: var(--surface); padding: 0 16px; overflow-x: auto; }
+  .tab { padding: 12px 16px; font-size: 13px; font-weight: 500; color: var(--text3); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -0.5px; white-space: nowrap; transition: color .15s; }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--green); border-bottom-color: var(--green); }
+  .tab-icon { margin-right: 5px; }
+  .content { padding: 20px; max-width: 720px; margin: 0 auto; }
+
+  /* CARDS */
+  .card { background: var(--surface); border: 0.5px solid var(--border); border-radius: 12px; padding: 18px 20px; margin-bottom: 14px; }
+  .card h3 { font-size: 14px; font-weight: 600; color: var(--text2); margin-bottom: 14px; }
+
+  /* BANNERS */
+  .banner { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 14px; border-radius: var(--radius); margin-bottom: 14px; flex-wrap: wrap; }
+  .banner.green { background: var(--green-light); border: 0.5px solid var(--green-border); }
+  .banner.amber { background: #faeeda; border: 0.5px solid #fac775; }
+  .banner.gray { background: var(--surface2); border: 0.5px solid var(--border); }
+  .banner p { font-size: 13px; }
+  .banner.green p { color: var(--green-dark); }
+  .banner.amber p { color: #854f0b; }
+  .banner.gray p { color: var(--text3); }
+  .wa-btn { display: inline-flex; align-items: center; gap: 5px; background: #25D366; color: #fff; text-decoration: none; padding: 6px 12px; border-radius: var(--radius); font-size: 12px; font-weight: 600; white-space: nowrap; }
+  .wa-btn:hover { background: #1da851; }
+
+  /* STATUS PILLS */
+  .status-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  .status-pill { display: flex; align-items: center; gap: 6px; padding: 5px 11px; border-radius: 20px; font-size: 12px; font-weight: 500; background: var(--surface2); border: 0.5px solid var(--border); }
+  .dot { width: 7px; height: 7px; border-radius: 50%; }
+  .dot-green { background: var(--green); }
+  .dot-amber { background: var(--amber); }
+
+  /* EINGABE */
+  .weight-input { padding: 12px 14px; border: 0.5px solid var(--border-strong); border-radius: var(--radius); background: var(--surface2); color: var(--text); font-size: 20px; font-weight: 600; width: 100%; outline: none; }
+  .weight-input:focus { border-color: var(--green); }
+  .done-box { background: var(--green-light); border: 0.5px solid var(--green-border); border-radius: var(--radius); padding: 14px; text-align: center; color: var(--green-dark); font-size: 14px; font-weight: 500; }
+  .locked-box { background: var(--surface2); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 14px; text-align: center; color: var(--text3); font-size: 13px; }
+
+  /* TABLE */
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; padding: 7px 10px; color: var(--text3); font-weight: 500; font-size: 11px; text-transform: uppercase; letter-spacing: 0.4px; border-bottom: 0.5px solid var(--border); }
+  td { padding: 9px 10px; border-bottom: 0.5px solid var(--border); vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  .winner-tag { display: inline-block; background: var(--green-light); color: var(--green-dark); padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; border: 0.5px solid var(--green-border); }
+  .delta-neg { color: var(--green); font-weight: 600; }
+  .delta-pos { color: var(--red); font-weight: 600; }
+
+  /* METRICS */
+  .metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px; }
+  .metric { background: var(--surface2); border-radius: var(--radius); padding: 12px 14px; }
+  .metric-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 4px; }
+  .metric-val { font-size: 20px; font-weight: 700; color: var(--text); }
+
+  /* FORM */
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .full { grid-column: 1 / -1; }
+  .btn-sm { padding: 9px 16px; background: var(--green); color: #fff; border: none; border-radius: var(--radius); font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 4px; }
+  .btn-sm:hover { background: var(--green-dark); }
+
+  /* LOADING */
+  .loading { text-align: center; padding: 40px; color: var(--text3); font-size: 13px; }
+
+  @media (max-width: 480px) {
+    .metrics { grid-template-columns: repeat(2, 1fr); }
+    .form-grid { grid-template-columns: 1fr; }
+    .full { grid-column: 1; }
+    .content { padding: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-logo">Gewicht<span>Wette</span></div>
+  <div class="login-sub">Die Wette läuft — Abnehmen oder zahlen.</div>
+  <div class="login-card">
+    <h2>Anmelden</h2>
+    <div class="field">
+      <label>Spieler</label>
+      <select id="loginUser">
+        <option value="">— auswählen —</option>
+        <option value="PZU">PZU</option>
+        <option value="Chris">Chris</option>
+        <option value="Vitalij">Vitalij</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Passwort</label>
+      <input type="password" id="loginPass" placeholder="••••••">
+    </div>
+    <div class="err hidden" id="loginErr"></div>
+    <button class="btn-green" onclick="doLogin()">Anmelden</button>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="mainApp" class="hidden">
+  <div class="topbar">
+    <div class="topbar-logo">Gewicht<span>Wette</span></div>
+    <div class="topbar-right">
+      <div class="user-pill" id="userPill"></div>
+      <button class="logout-btn" onclick="doLogout()">Abmelden</button>
+    </div>
+  </div>
+  <div class="countdown-bar" id="countdownBar"></div>
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('eingabe',this)">⚖️ <span class="tab-icon"></span>Mein Gewicht</div>
+    <div class="tab" onclick="switchTab('dashboard',this)">📊 <span class="tab-icon"></span>Dashboard</div>
+    <div class="tab" onclick="switchTab('essen',this)">🍽️ <span class="tab-icon"></span>Essen & Wette</div>
+  </div>
+  <div class="content">
+    <div id="tab-eingabe"></div>
+    <div id="tab-dashboard" class="hidden"></div>
+    <div id="tab-essen" class="hidden"></div>
+  </div>
+</div>
+
+<script>
+// ─── Firebase Config ───────────────────────────────────────────────
+const firebaseConfig = {
+  apiKey: "AIzaSyBv88JujGJhdUcKU-V5BQKIEXEZTZM1mMc",
+  authDomain: "gewicht-wette.firebaseapp.com",
+  databaseURL: "https://gewicht-wette-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "gewicht-wette",
+  storageBucket: "gewicht-wette.firebasestorage.app",
+  messagingSenderId: "161345039342",
+  appId: "1:161345039342:web:e6c8e7ba1007368d3f7cff"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// ─── Config ────────────────────────────────────────────────────────
+const USERS = {
+  PZU:     { pass: 'pzu123' },
+  Chris:   { pass: 'chris123' },
+  Vitalij: { pass: 'vitalij123' }
+};
+const PLAYERS = ['PZU', 'Chris', 'Vitalij'];
+const COLORS  = { PZU: '#2a78d6', Chris: '#1baf7a', Vitalij: '#eda100' };
+
+// Zukünftige Wiegetage (letzter Tag des Monats, alle 2 Monate)
+const FUTURE_DATES = [
+  '2025-08-31','2025-10-31','2025-12-31',
+  '2026-02-28','2026-04-30','2026-06-30',
+  '2026-08-31','2026-10-31','2026-12-31'
+];
+
+// Historische Daten (aus der Excel)
+const HISTORICAL = [
+  { date:'2023-06-01', PZU:87.4,  Chris:85.1,  Vitalij:116.2, winner:'Chris',   restaurant:'bonabrasa',     restaurantDate:'' },
+  { date:'2024-01-31', PZU:90,    Chris:81.6,  Vitalij:115.9, winner:'Chris',   restaurant:'brisket',       restaurantDate:'2025-03-26' },
+  { date:'2024-04-30', PZU:85.5,  Chris:83.3,  Vitalij:119,   winner:'PZU',     restaurant:'la Taqueria',   restaurantDate:'2025-04-23' },
+  { date:'2024-06-30', PZU:86.3,  Chris:81.3,  Vitalij:120.6, winner:'Chris',   restaurant:'Texas Wild West',restaurantDate:'2025-08-06' },
+  { date:'2024-08-31', PZU:83.3,  Chris:82.1,  Vitalij:118.1, winner:'PZU',     restaurant:'La Cote',       restaurantDate:'2025-10-01' },
+  { date:'2024-10-30', PZU:86.4,  Chris:83.2,  Vitalij:114.6, winner:'Vitalij', restaurant:'',              restaurantDate:'' },
+  { date:'2024-12-31', PZU:92.6,  Chris:82.6,  Vitalij:119.9, winner:'Chris',   restaurant:'',              restaurantDate:'' },
+  { date:'2025-02-28', PZU:86.7,  Chris:83.7,  Vitalij:119.4, winner:'PZU',     restaurant:'',              restaurantDate:'' },
+  { date:'2025-04-30', PZU:78.5,  Chris:84.1,  Vitalij:119,   winner:'PZU',     restaurant:'',              restaurantDate:'' },
+  { date:'2025-06-30', PZU:78,    Chris:84.5,  Vitalij:113.8, winner:'Vitalij', restaurant:'',              restaurantDate:'' },
+];
+
+// Aktuelle Runde
+const CURRENT_ROUND = '2025-08-31';
+const TODAY = new Date();
+
+// ─── State ─────────────────────────────────────────────────────────
+let currentUser = null;
+let charts = {};
+let cdTimer = null;
+let submissions = {};  // live from Firebase
+
+// ─── Firebase Listeners ────────────────────────────────────────────
+function startListening() {
+  db.ref('rounds/' + CURRENT_ROUND).on('value', snap => {
+    submissions = snap.val() || {};
+    const activeTab = document.querySelector('.tab.active');
+    if (!activeTab) return;
+    const tabName = activeTab.textContent.includes('Gewicht') ? 'eingabe'
+                  : activeTab.textContent.includes('Dashboard') ? 'dashboard' : 'essen';
+    if (tabName === 'eingabe') renderEingabe();
+    if (tabName === 'dashboard') renderDashboard();
+  });
+}
+function stopListening() {
+  db.ref('rounds/' + CURRENT_ROUND).off();
+}
+
+// ─── Login / Logout ────────────────────────────────────────────────
+function doLogin() {
+  const user = document.getElementById('loginUser').value;
+  const pass = document.getElementById('loginPass').value;
+  const err  = document.getElementById('loginErr');
+  if (!user) { showErr('Bitte einen Spieler auswählen.'); return; }
+  if (USERS[user].pass !== pass) { showErr('Falsches Passwort.'); return; }
+  err.classList.add('hidden');
+  currentUser = user;
+  document.getElementById('loginScreen').classList.add('hidden');
+  document.getElementById('mainApp').classList.remove('hidden');
+  document.getElementById('userPill').textContent = user;
+  startListening();
+  startCountdown();
+  switchTab('eingabe', document.querySelector('.tab'));
+}
+function showErr(msg) {
+  const e = document.getElementById('loginErr');
+  e.textContent = msg;
+  e.classList.remove('hidden');
+}
+function doLogout() {
+  stopListening();
+  if (cdTimer) clearInterval(cdTimer);
+  Object.values(charts).forEach(c => { try { c.destroy(); } catch {} });
+  charts = {};
+  currentUser = null;
+  submissions = {};
+  document.getElementById('mainApp').classList.add('hidden');
+  document.getElementById('loginScreen').classList.remove('hidden');
+  document.getElementById('loginPass').value = '';
+  document.getElementById('loginUser').value = '';
+}
+
+// ─── Countdown ─────────────────────────────────────────────────────
+function getNextDate() {
+  const now = new Date();
+  now.setHours(0,0,0,0);
+  return FUTURE_DATES.map(d => new Date(d + 'T00:00:00'))
+    .find(d => d >= now) || null;
+}
+function startCountdown() {
+  if (cdTimer) clearInterval(cdTimer);
+  updateCountdown();
+  cdTimer = setInterval(updateCountdown, 1000);
+}
+function updateCountdown() {
+  const el = document.getElementById('countdownBar');
+  const next = getNextDate();
+  if (!next) { el.innerHTML = ''; return; }
+  const todayMid = new Date(); todayMid.setHours(0,0,0,0);
+  const isToday = next.getTime() === todayMid.getTime();
+  const dateStr = next.toLocaleDateString('de-CH', { day:'2-digit', month:'long', year:'numeric' });
+  if (isToday) {
+    el.innerHTML = `<div class="cd-left"><div class="cd-label">Nächster Wiegetag</div><div class="cd-date">${dateStr}</div></div><div class="cd-today">🎯 Heute ist Wiegetag!</div>`;
+    return;
+  }
+  const diff = next - new Date();
+  const d = Math.floor(diff / 86400000);
+  const h = Math.floor((diff % 86400000) / 3600000);
+  const m = Math.floor((diff % 3600000) / 60000);
+  const s = Math.floor((diff % 60000) / 1000);
+  el.innerHTML = `
+    <div class="cd-left">
+      <div class="cd-label">Nächster Wiegetag</div>
+      <div class="cd-date">${dateStr}</div>
+    </div>
+    <div class="cd-units">
+      <div class="cd-block"><div class="cd-num">${String(d).padStart(2,'0')}</div><div class="cd-unit">Tage</div></div>
+      <div class="cd-sep">:</div>
+      <div class="cd-block"><div class="cd-num">${String(h).padStart(2,'0')}</div><div class="cd-unit">Std</div></div>
+      <div class="cd-sep">:</div>
+      <div class="cd-block"><div class="cd-num">${String(m).padStart(2,'0')}</div><div class="cd-unit">Min</div></div>
+      <div class="cd-sep">:</div>
+      <div class="cd-block"><div class="cd-num">${String(s).padStart(2,'0')}</div><div class="cd-unit">Sek</div></div>
+    </div>`;
+}
+
+// ─── Tabs ──────────────────────────────────────────────────────────
+function switchTab(name, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  if (el) el.classList.add('active');
+  ['eingabe','dashboard','essen'].forEach(t => document.getElementById('tab-'+t).classList.add('hidden'));
+  document.getElementById('tab-'+name).classList.remove('hidden');
+  if (name === 'eingabe')   renderEingabe();
+  if (name === 'dashboard') renderDashboard();
+  if (name === 'essen')     renderEssen();
+}
+
+// ─── Helpers ───────────────────────────────────────────────────────
+function isInputDay() {
+  const t = new Date(); t.setHours(0,0,0,0);
+  const r = new Date(CURRENT_ROUND + 'T00:00:00');
+  return t.getTime() === r.getTime();
+}
+function allSubmitted() {
+  return PLAYERS.every(p => submissions[p] !== undefined);
+}
+function getPending() {
+  return PLAYERS.filter(p => submissions[p] === undefined);
+}
+
+// ─── Tab: Eingabe ──────────────────────────────────────────────────
+function renderEingabe() {
+  const el = document.getElementById('tab-eingabe');
+  const myDone = submissions[currentUser] !== undefined;
+  const allDone = allSubmitted();
+  const pending = getPending();
+  const inputDay = isInputDay();
+
+  // Banner oben
+  let topBanner = '';
+  if (!inputDay) {
+    const next = getNextDate();
+    const ds = next ? next.toLocaleDateString('de-CH',{day:'2-digit',month:'long',year:'numeric'}) : '—';
+    topBanner = `<div class="banner amber"><p>📅 Kein Eingabetag. Nächster Stichtag: <strong>${ds}</strong></p></div>`;
+  }
+
+  // Status
+  let statusRow = '<div class="status-row">';
+  PLAYERS.forEach(p => {
+    const done = submissions[p] !== undefined;
+    statusRow += `<div class="status-pill"><span class="dot ${done?'dot-green':'dot-amber'}"></span>${p}: <strong>${done?'✓ eingegeben':'ausstehend'}</strong></div>`;
+  });
+  statusRow += '</div>';
+
+  // WhatsApp Reminder
+  let reminder = '';
+  const others = pending.filter(p => p !== currentUser);
+  if (others.length > 0 && inputDay) {
+    const names = others.join(' & ');
+    const msg = encodeURIComponent(`Hey ${names}! 💪 Bitte heute noch dein Gewicht in die GewichtWette App eingeben. Stichtag: ${CURRENT_ROUND} — ohne deine Eingabe sehen alle nichts!`);
+    reminder = `<div class="banner amber">
+      <p>⏳ <strong>${names}</strong> ${others.length>1?'haben':'hat'} noch nicht eingegeben.</p>
+      <a class="wa-btn" href="https://wa.me/?text=${msg}" target="_blank">💬 WhatsApp</a>
+    </div>`;
+  }
+
+  // Eingabe-Bereich
+  let inputArea = '';
+  if (!inputDay) {
+    inputArea = `<div class="card"><div class="locked-box">🔒 Eingabe nur am Stichtag (${CURRENT_ROUND}) möglich.</div></div>`;
+  } else if (myDone) {
+    inputArea = `<div class="card"><div class="done-box">✅ Du hast <strong>${submissions[currentUser].toFixed(1)} kg</strong> eingetragen.${allDone ? ' Alle sind dabei — schau ins Dashboard!' : ' Warte auf die anderen...'}</div></div>`;
+  } else {
+    inputArea = `<div class="card">
+      <h3>⚖️ Gewicht eintragen — Runde ${CURRENT_ROUND}</h3>
+      <div class="field" style="margin-bottom:12px">
+        <label>Dein Gewicht (kg)</label>
+        <input class="weight-input" type="number" id="wInput" step="0.1" min="30" max="300" placeholder="83.4">
+      </div>
+      <button class="btn-green" onclick="saveWeight()">Gewicht speichern</button>
+    </div>`;
+  }
+
+  // Reveal wenn alle fertig
+  let reveal = '';
+  if (allDone) {
+    const prev = HISTORICAL[HISTORICAL.length - 1];
+    let bestDelta = Infinity, bestP = '';
+    PLAYERS.forEach(p => { const d = submissions[p] - (prev[p]||submissions[p]); if(d < bestDelta){bestDelta=d;bestP=p;} });
+    reveal = `<div class="card"><h3>🏆 Ergebnis dieser Runde</h3>
+      <table><thead><tr><th>Spieler</th><th>Vorher</th><th>Jetzt</th><th>Differenz</th></tr></thead><tbody>`;
+    PLAYERS.forEach(p => {
+      const cur = submissions[p], prv = prev[p] || cur, d = cur - prv;
+      const cls = d < 0 ? 'delta-neg' : d > 0 ? 'delta-pos' : '';
+      const win = p === bestP ? ' <span class="winner-tag">🏆 Gewinner</span>' : '';
+      reveal += `<tr><td><strong>${p}</strong>${win}</td><td>${prv.toFixed(1)} kg</td><td>${cur.toFixed(1)} kg</td><td class="${cls}">${d>0?'+':''}${d.toFixed(1)} kg</td></tr>`;
+    });
+    reveal += '</tbody></table></div>';
+  } else if (myDone) {
+    reveal = `<div class="card"><div class="locked-box">👁️ Die Gewichte der anderen werden erst sichtbar, wenn alle eingegeben haben.</div></div>`;
+  }
+
+  el.innerHTML = topBanner + statusRow + reminder + inputArea + reveal;
+}
+
+async function saveWeight() {
+  const val = parseFloat(document.getElementById('wInput').value);
+  if (!val || val < 30) { alert('Bitte ein gültiges Gewicht eingeben.'); return; }
+  try {
+    await db.ref(`rounds/${CURRENT_ROUND}/${currentUser}`).set(val);
+  } catch(e) {
+    alert('Fehler beim Speichern: ' + e.message);
+  }
+}
+
+// ─── Tab: Dashboard ────────────────────────────────────────────────
+function renderDashboard() {
+  const el = document.getElementById('tab-dashboard');
+  const allDone = allSubmitted();
+  const allRounds = [...HISTORICAL];
+  if (allDone) allRounds.push({ date: CURRENT_ROUND, ...submissions });
+
+  const labels = allRounds.map(r => r.date.slice(0,7));
+  const wins = { PZU:0, Chris:0, Vitalij:0 };
+  allRounds.forEach(r => { if (r.winner && wins[r.winner] !== undefined) wins[r.winner]++; });
+  const topW = Object.entries(wins).sort((a,b)=>b[1]-a[1])[0];
+
+  const last = allRounds[allRounds.length-1];
+  const prev = allRounds[allRounds.length-2] || last;
+  let bestDelta = Infinity, bestP = '';
+  PLAYERS.forEach(p => { const d=(last[p]||0)-(prev[p]||0); if(d<bestDelta){bestDelta=d;bestP=p;} });
+
+  el.innerHTML = `
+    <div class="metrics">
+      <div class="metric"><div class="metric-label">Gesamtsieger</div><div class="metric-val" style="font-size:16px">${topW[0]}<br><span style="font-size:12px;color:var(--text3)">${topW[1]} Siege</span></div></div>
+      <div class="metric"><div class="metric-label">Letzte Runde</div><div class="metric-val" style="font-size:16px">${bestP}<br><span style="font-size:12px;color:var(--green)">${bestDelta<0?bestDelta.toFixed(1)+' kg':'-'}</span></div></div>
+      <div class="metric"><div class="metric-label">Runden total</div><div class="metric-val">${allRounds.length}</div></div>
+    </div>
+    <div class="card"><h3>Gewichtsverlauf (kg)</h3>
+      <div style="display:flex;gap:14px;margin-bottom:10px;flex-wrap:wrap">
+        ${PLAYERS.map(p=>`<span style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text2)"><span style="width:10px;height:10px;border-radius:2px;background:${COLORS[p]};display:inline-block"></span>${p}</span>`).join('')}
+      </div>
+      <div style="position:relative;height:240px"><canvas id="cLine" role="img" aria-label="Gewichtsverlauf">Verlauf</canvas></div>
+    </div>
+    <div class="card"><h3>Veränderung pro Runde (kg)</h3>
+      <div style="display:flex;gap:14px;margin-bottom:10px;flex-wrap:wrap">
+        ${PLAYERS.map(p=>`<span style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text2)"><span style="width:10px;height:10px;border-radius:2px;background:${COLORS[p]};display:inline-block"></span>${p}</span>`).join('')}
+      </div>
+      <div style="position:relative;height:200px"><canvas id="cDelta" role="img" aria-label="Veränderungen">Delta</canvas></div>
+    </div>
+    <div class="card"><h3>Gesamtveränderung seit Start (kg)</h3>
+      <div style="position:relative;height:130px"><canvas id="cTotal" role="img" aria-label="Gesamtveränderung">Gesamt</canvas></div>
+    </div>
+    <div class="card"><h3>Siegertabelle</h3>
+      <table><thead><tr><th>Spieler</th><th>Siege</th></tr></thead><tbody>
+        ${Object.entries(wins).sort((a,b)=>b[1]-a[1]).map(([p,w])=>`
+          <tr><td>${p} ${w===topW[1]?'<span class="winner-tag">🏆</span>':''}</td><td>${w}</td></tr>`).join('')}
+      </tbody></table>
+    </div>`;
+
+  if (charts.line)  { charts.line.destroy(); }
+  if (charts.delta) { charts.delta.destroy(); }
+  if (charts.total) { charts.total.destroy(); }
+
+  const gc = getComputedStyle(document.documentElement).getPropertyValue('--border').trim() || '#2c2c2a';
+  const tc = '#898781';
+
+  charts.line = new Chart(document.getElementById('cLine'), {
+    type: 'line',
+    data: { labels, datasets: PLAYERS.map(p => ({
+      label: p, data: allRounds.map(r => r[p]||null),
+      borderColor: COLORS[p], backgroundColor: COLORS[p]+'15',
+      tension: 0.3, pointRadius: 4, borderWidth: 2
+    }))},
+    options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}},
+      scales:{x:{ticks:{color:tc,font:{size:10},maxRotation:45},grid:{color:'#2c2c2a'}},
+              y:{ticks:{color:tc,callback:v=>v+'kg'},grid:{color:'#2c2c2a'}}} }
+  });
+
+  const dLabels = labels.slice(1);
+  const deltas = {};
+  PLAYERS.forEach(p => { deltas[p] = []; });
+  for (let i=1; i<allRounds.length; i++)
+    PLAYERS.forEach(p => deltas[p].push(parseFloat(((allRounds[i][p]||0)-(allRounds[i-1][p]||0)).toFixed(1))));
+
+  charts.delta = new Chart(document.getElementById('cDelta'), {
+    type: 'bar',
+    data: { labels: dLabels, datasets: PLAYERS.map(p => ({
+      label:p, data:deltas[p], backgroundColor:COLORS[p], borderRadius:3
+    }))},
+    options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}},
+      scales:{x:{ticks:{color:tc,font:{size:10},maxRotation:45},grid:{color:'#2c2c2a'}},
+              y:{ticks:{color:tc,callback:v=>v+'kg'},grid:{color:'#2c2c2a'}}} }
+  });
+
+  const first = allRounds[0];
+  const totalD = PLAYERS.map(p => parseFloat(((allRounds[allRounds.length-1][p]||0)-(first[p]||0)).toFixed(1)));
+  charts.total = new Chart(document.getElementById('cTotal'), {
+    type: 'bar',
+    data: { labels: PLAYERS, datasets:[{ data:totalD, backgroundColor:totalD.map(v=>v<0?'#1baf7a':'#e34948'), borderRadius:4 }]},
+    options: { indexAxis:'y', responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}},
+      scales:{x:{ticks:{color:tc,callback:v=>v+'kg'},grid:{color:'#2c2c2a'}},
+              y:{ticks:{color:tc},grid:{color:'#2c2c2a'}}} }
+  });
+}
+
+// ─── Tab: Essen ────────────────────────────────────────────────────
+async function renderEssen() {
+  const el = document.getElementById('tab-essen');
+  el.innerHTML = '<div class="loading">Wird geladen…</div>';
+
+  let essenData = {};
+  try {
+    const snap = await db.ref('essen').get();
+    essenData = snap.val() || {};
+  } catch(e) { essenData = {}; }
+
+  const roundDates = HISTORICAL.map(r => r.date);
+  const combined = HISTORICAL.map(r => {
+    const fb = essenData[r.date.replace(/-/g,'_')] || {};
+    return {
+      date: r.date,
+      winner: r.winner || '—',
+      restaurant: fb.restaurant || r.restaurant || '',
+      restaurantDate: fb.restaurantDate || r.restaurantDate || ''
+    };
+  });
+  const pendingCount = combined.filter(r => !r.restaurant).length;
+
+  el.innerHTML = `
+    ${pendingCount > 0 ? `<div class="banner amber"><p>⏳ <strong>${pendingCount} Runden</strong> noch ohne Restaurant-Eintrag.</p></div>` : ''}
+    <div class="card">
+      <h3>✏️ Essen-Eintrag hinzufügen</h3>
+      <div class="form-grid">
+        <div class="field">
+          <label>Runde</label>
+          <select id="eRound">${roundDates.map(d=>`<option value="${d}">${d}</option>`).join('')}</select>
+        </div>
+        <div class="field">
+          <label>Restaurant</label>
+          <input type="text" id="eRestaurant" placeholder="z.B. bonabrasa">
+        </div>
+        <div class="field full">
+          <label>Datum des Essens</label>
+          <input type="date" id="eDate">
+        </div>
+      </div>
+      <button class="btn-sm" onclick="saveEssen()">Eintrag speichern</button>
+    </div>
+    <div class="card">
+      <h3>🏆 Alle Runden</h3>
+      <table>
+        <thead><tr><th>Runde</th><th>Gewinner</th><th>Restaurant</th><th>Datum Essen</th></tr></thead>
+        <tbody>
+          ${combined.map(r => `<tr>
+            <td>${r.date.slice(0,7)}</td>
+            <td>${r.winner&&r.winner!=='—' ? `<span class="winner-tag">${r.winner}</span>` : '—'}</td>
+            <td>${r.restaurant || '<span style="color:var(--text3)">—</span>'}</td>
+            <td>${r.restaurantDate ? r.restaurantDate.slice(0,10) : '<span style="color:var(--text3)">—</span>'}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>`;
+}
+
+async function saveEssen() {
+  const round = document.getElementById('eRound').value;
+  const restaurant = document.getElementById('eRestaurant').value.trim();
+  const date = document.getElementById('eDate').value;
+  if (!restaurant) { alert('Bitte Restaurant eingeben.'); return; }
+  const key = round.replace(/-/g,'_');
+  try {
+    await db.ref(`essen/${key}`).set({ restaurant, restaurantDate: date });
+    renderEssen();
+  } catch(e) { alert('Fehler: ' + e.message); }
+}
+
+// ─── Init ──────────────────────────────────────────────────────────
+document.getElementById('loginPass').addEventListener('keydown', e => {
+  if (e.key === 'Enter') doLogin();
+});
+</script>
+</body>
+</html>
