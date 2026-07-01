@@ -4,144 +4,184 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>GewichtWette</title>
-
-<!-- PWA: App-Verhalten -->
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="GewichtWette">
-<meta name="application-name" content="GewichtWette">
 <meta name="theme-color" content="#1baf7a">
-
-<!-- PWA: Icons für iPhone/Android -->
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%231baf7a'/%3E%3Ctext x='90' y='115' font-family='system-ui,sans-serif' font-size='90' font-weight='700' text-anchor='middle' fill='white'%3EW%3C/text%3E%3C/svg%3E">
-
-<!-- PWA Manifest (inline) -->
-<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22GewichtWette%22%2C%22short_name%22%3A%22GewichtWette%22%2C%22description%22%3A%22Die+Wette+l%C3%A4uft+%E2%80%94+Abnehmen+oder+zahlen.%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23f5f4f0%22%2C%22theme_color%22%3A%22%231baf7a%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%2520xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%2520viewBox%3D'0%25200%2520192%2520192'%253E%253Crect%2520width%3D'192'%2520height%3D'192'%2520rx%3D'48'%2520fill%3D'%25231baf7a'%2F%253E%253Ctext%2520x%3D'96'%2520y%3D'130'%2520font-family%3D'system-ui'%2520font-size%3D'110'%2520font-weight%3D'700'%2520text-anchor%3D'middle'%2520fill%3D'white'%253EW%253C%2Ftext%253E%253C%2Fsvg%253E%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%5D%7D">
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
-  :root {
-    --green:#1baf7a;--green-dark:#0f6e56;--green-light:#e1f5ee;--green-border:#9fe1cb;
-    --red:#e34948;--amber:#eda100;--blue:#2a78d6;
-    --bg:#f5f4f0;--surface:#ffffff;--surface2:#f9f8f5;
-    --border:rgba(0,0,0,0.10);--border-strong:rgba(0,0,0,0.18);
-    --text:#0b0b0b;--text2:#52514e;--text3:#898781;
-    --radius:8px;--shadow:0 1px 4px rgba(0,0,0,0.07);
-  }
-  @media(prefers-color-scheme:dark){
-    :root{
-      --bg:#141413;--surface:#1e1e1c;--surface2:#252523;
-      --border:rgba(255,255,255,0.10);--border-strong:rgba(255,255,255,0.18);
-      --text:#f0ede6;--text2:#c3c2b7;--text3:#898781;
-      --green-light:#04342c;--green-border:#085041;
-    }
-  }
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;min-height:100dvh;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
-  .topbar{padding-top:max(12px,env(safe-area-inset-top))}
-  .hidden{display:none!important}
+:root{
+  --green:#1baf7a;--green-dark:#0f6e56;--green-light:#e1f5ee;--green-border:#9fe1cb;
+  --red:#e34948;--amber:#eda100;--blue:#2a78d6;
+  --bg:#f5f4f0;--surface:#fff;--surface2:#f9f8f5;
+  --border:rgba(0,0,0,.10);--border-strong:rgba(0,0,0,.18);
+  --text:#0b0b0b;--text2:#52514e;--text3:#898781;
+  --radius:8px;--shadow:0 1px 4px rgba(0,0,0,.07);
+  --sat:env(safe-area-inset-top);--sab:env(safe-area-inset-bottom);
+  --sal:env(safe-area-inset-left);--sar:env(safe-area-inset-right);
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#141413;--surface:#1e1e1c;--surface2:#252523;
+  --border:rgba(255,255,255,.10);--border-strong:rgba(255,255,255,.18);
+  --text:#f0ede6;--text2:#c3c2b7;--text3:#898781;
+  --green-light:#04342c;--green-border:#085041;
+}}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{height:100%}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  background:var(--bg);color:var(--text);
+  min-height:100vh;min-height:100dvh;
+  padding-top:env(safe-area-inset-top);
+  padding-left:env(safe-area-inset-left);
+  padding-right:env(safe-area-inset-right);
+  font-size:16px; /* base: prevents zoom on input focus on iOS */
+}
+.hidden{display:none!important}
+input,select,textarea{font-size:16px!important} /* prevent iOS zoom */
 
-  #loginScreen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:24px}
-  .login-logo{font-size:36px;font-weight:600;letter-spacing:-1.5px}
-  .login-logo span{color:var(--green)}
-  .login-sub{font-size:14px;color:var(--text3);margin-top:-16px}
-  .login-card{background:var(--surface);border:0.5px solid var(--border);border-radius:16px;padding:28px 32px;width:320px;display:flex;flex-direction:column;gap:14px;box-shadow:var(--shadow)}
-  .login-card h2{font-size:16px;font-weight:600}
-  .field label{font-size:12px;color:var(--text3);display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:0.4px}
-  .field select,.field input{width:100%;padding:9px 12px;border:0.5px solid var(--border-strong);border-radius:var(--radius);background:var(--surface2);color:var(--text);font-size:14px;outline:none;transition:border-color .15s}
-  .field select:focus,.field input:focus{border-color:var(--green)}
-  .btn-green{width:100%;padding:11px;background:var(--green);color:#fff;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;transition:background .15s}
-  .btn-green:hover{background:var(--green-dark)}
-  .err{color:var(--red);font-size:13px;text-align:center}
+/* ── LOGIN ── */
+#loginScreen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100dvh;gap:20px;padding:20px}
+.login-logo{font-size:clamp(28px,8vw,40px);font-weight:700;letter-spacing:-1.5px}
+.login-logo span{color:var(--green)}
+.login-sub{font-size:14px;color:var(--text3);margin-top:-14px}
+.login-card{background:var(--surface);border:0.5px solid var(--border);border-radius:16px;padding:24px;width:100%;max-width:340px;display:flex;flex-direction:column;gap:14px;box-shadow:var(--shadow)}
+.login-card h2{font-size:16px;font-weight:600}
+.field label{font-size:12px;color:var(--text3);display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px}
+.field select,.field input[type=password],.field input[type=text],.field input[type=number],.field input[type=date]{
+  width:100%;padding:12px;border:0.5px solid var(--border-strong);border-radius:var(--radius);
+  background:var(--surface2);color:var(--text);outline:none;transition:border-color .15s;
+  min-height:44px; /* touch target */
+}
+.field select:focus,.field input:focus{border-color:var(--green)}
+.btn-green{width:100%;padding:13px;background:var(--green);color:#fff;border:none;border-radius:var(--radius);font-size:15px;font-weight:600;cursor:pointer;min-height:44px}
+.btn-green:active{background:var(--green-dark)}
+.err{color:var(--red);font-size:13px;text-align:center}
 
-  .topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:0.5px solid var(--border);background:var(--surface);position:sticky;top:0;z-index:10}
-  .topbar-logo{font-size:17px;font-weight:700;letter-spacing:-0.5px}
-  .topbar-logo span{color:var(--green)}
-  .topbar-right{display:flex;align-items:center;gap:10px}
-  .user-pill{font-size:12px;font-weight:600;background:var(--green-light);color:var(--green-dark);padding:4px 10px;border-radius:20px;border:0.5px solid var(--green-border)}
-  .logout-btn{font-size:12px;color:var(--text3);cursor:pointer;padding:5px 10px;border-radius:var(--radius);border:0.5px solid var(--border-strong);background:transparent}
-  .logout-btn:hover{background:var(--surface2)}
+/* ── TOPBAR ── */
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 16px;
+  padding-left:max(16px,env(safe-area-inset-left));
+  padding-right:max(16px,env(safe-area-inset-right));
+  border-bottom:0.5px solid var(--border);background:var(--surface);
+  position:sticky;top:0;z-index:10;
+}
+.topbar-logo{font-size:17px;font-weight:700;letter-spacing:-.5px}
+.topbar-logo span{color:var(--green)}
+.topbar-right{display:flex;align-items:center;gap:8px}
+.user-pill{font-size:12px;font-weight:600;background:var(--green-light);color:var(--green-dark);padding:4px 10px;border-radius:20px;border:0.5px solid var(--green-border)}
+.logout-btn{font-size:12px;color:var(--text3);cursor:pointer;padding:6px 10px;border-radius:var(--radius);border:0.5px solid var(--border-strong);background:transparent;min-height:32px}
 
-  .countdown-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;background:var(--surface2);border-bottom:0.5px solid var(--border);flex-wrap:wrap;gap:8px}
-  .cd-left{display:flex;flex-direction:column;gap:1px}
-  .cd-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px}
-  .cd-date{font-size:13px;font-weight:600}
-  .cd-units{display:flex;align-items:center;gap:6px}
-  .cd-block{text-align:center;min-width:40px}
-  .cd-num{font-size:22px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
-  .cd-unit{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.4px;margin-top:1px}
-  .cd-sep{font-size:18px;color:var(--border-strong);margin-bottom:8px}
-  .cd-today{font-size:13px;font-weight:600;color:var(--green);background:var(--green-light);padding:5px 14px;border-radius:20px;border:0.5px solid var(--green-border)}
+/* ── COUNTDOWN ── */
+.countdown-bar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 16px;background:var(--surface2);border-bottom:0.5px solid var(--border);
+  flex-wrap:wrap;gap:8px;
+}
+.cd-left{display:flex;flex-direction:column;gap:1px}
+.cd-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px}
+.cd-date{font-size:13px;font-weight:600}
+.cd-units{display:flex;align-items:center;gap:4px}
+.cd-block{text-align:center;min-width:36px}
+.cd-num{font-size:clamp(18px,5vw,22px);font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+.cd-unit{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;margin-top:1px}
+.cd-sep{font-size:16px;color:var(--border-strong);margin-bottom:8px}
+.cd-today{font-size:13px;font-weight:600;color:var(--green);background:var(--green-light);padding:5px 12px;border-radius:20px;border:0.5px solid var(--green-border)}
 
-  .tabs{display:flex;border-bottom:0.5px solid var(--border);background:var(--surface);padding:0 16px;overflow-x:auto}
-  .tab{padding:12px 16px;font-size:13px;font-weight:500;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-0.5px;white-space:nowrap;transition:color .15s}
-  .tab:hover{color:var(--text)}
-  .tab.active{color:var(--green);border-bottom-color:var(--green)}
-  .content{padding:20px;max-width:720px;margin:0 auto}
+/* ── TABS ── */
+.tabs{display:flex;border-bottom:0.5px solid var(--border);background:var(--surface);overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:12px 14px;font-size:13px;font-weight:500;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-.5px;white-space:nowrap;min-height:44px;display:flex;align-items:center}
+.tab.active{color:var(--green);border-bottom-color:var(--green)}
+.content{padding:16px;max-width:720px;margin:0 auto;padding-bottom:max(16px,env(safe-area-inset-bottom))}
 
-  .card{background:var(--surface);border:0.5px solid var(--border);border-radius:12px;padding:18px 20px;margin-bottom:14px}
-  .card h3{font-size:14px;font-weight:600;color:var(--text2);margin-bottom:14px}
+/* ── CARDS ── */
+.card{background:var(--surface);border:0.5px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px}
+.card h3{font-size:14px;font-weight:600;color:var(--text2);margin-bottom:12px}
 
-  .banner{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 14px;border-radius:var(--radius);margin-bottom:14px;flex-wrap:wrap}
-  .banner.green{background:var(--green-light);border:0.5px solid var(--green-border)}
-  .banner.amber{background:#faeeda;border:0.5px solid #fac775}
-  .banner.gray{background:var(--surface2);border:0.5px solid var(--border)}
-  .banner p{font-size:13px}
-  .banner.green p{color:var(--green-dark)}
-  .banner.amber p{color:#854f0b}
-  .banner.gray p{color:var(--text3)}
-  .wa-btn{display:inline-flex;align-items:center;gap:5px;background:#25D366;color:#fff;text-decoration:none;padding:6px 12px;border-radius:var(--radius);font-size:12px;font-weight:600;white-space:nowrap}
+/* ── BANNERS ── */
+.banner{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;border-radius:var(--radius);margin-bottom:12px;flex-wrap:wrap}
+.banner.green{background:var(--green-light);border:0.5px solid var(--green-border)}
+.banner.amber{background:#faeeda;border:0.5px solid #fac775}
+.banner p{font-size:13px}
+.banner.green p{color:var(--green-dark)}
+.banner.amber p{color:#854f0b}
+.wa-btn{display:inline-flex;align-items:center;gap:5px;background:#25D366;color:#fff;text-decoration:none;padding:8px 12px;border-radius:var(--radius);font-size:12px;font-weight:600;white-space:nowrap;min-height:36px}
 
-  .status-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
-  .status-pill{display:flex;align-items:center;gap:6px;padding:5px 11px;border-radius:20px;font-size:12px;font-weight:500;background:var(--surface2);border:0.5px solid var(--border)}
-  .dot{width:7px;height:7px;border-radius:50%}
-  .dot-green{background:var(--green)}
-  .dot-amber{background:var(--amber)}
+/* ── STATUS ── */
+.status-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.status-pill{display:flex;align-items:center;gap:5px;padding:6px 11px;border-radius:20px;font-size:12px;font-weight:500;background:var(--surface2);border:0.5px solid var(--border)}
+.dot{width:7px;height:7px;border-radius:50%}
+.dot-green{background:var(--green)}
+.dot-amber{background:var(--amber)}
 
-  .weight-input{padding:12px 14px;border:0.5px solid var(--border-strong);border-radius:var(--radius);background:var(--surface2);color:var(--text);font-size:20px;font-weight:600;width:100%;outline:none}
-  .weight-input:focus{border-color:var(--green)}
-  .done-box{background:var(--green-light);border:0.5px solid var(--green-border);border-radius:var(--radius);padding:14px;text-align:center;color:var(--green-dark);font-size:14px;font-weight:500}
-  .locked-box{background:var(--surface2);border:0.5px solid var(--border);border-radius:var(--radius);padding:14px;text-align:center;color:var(--text3);font-size:13px}
+/* ── WEIGHT INPUT ── */
+.weight-input{padding:14px;border:0.5px solid var(--border-strong);border-radius:var(--radius);background:var(--surface2);color:var(--text);font-size:24px!important;font-weight:700;width:100%;outline:none}
+.weight-input:focus{border-color:var(--green)}
+.done-box{background:var(--green-light);border:0.5px solid var(--green-border);border-radius:var(--radius);padding:16px;text-align:center;color:var(--green-dark);font-size:14px;font-weight:500}
+.locked-box{background:var(--surface2);border:0.5px solid var(--border);border-radius:var(--radius);padding:14px;text-align:center;color:var(--text3);font-size:13px}
 
-  /* GEWICHTSTABELLE */
-  .weight-table-wrap{overflow-x:auto;margin-top:0}
-  table{width:100%;border-collapse:collapse;font-size:13px}
-  th{text-align:left;padding:7px 10px;color:var(--text3);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:0.4px;border-bottom:0.5px solid var(--border)}
-  td{padding:9px 10px;border-bottom:0.5px solid var(--border);vertical-align:middle}
-  tr:last-child td{border-bottom:none}
-  tr:first-child td{font-weight:600}
-  .td-date{color:var(--text2);font-size:12px;white-space:nowrap}
-  .td-weight{font-weight:600;text-align:right}
-  .td-weight.mine{color:var(--green);background:var(--green-light)}
-  .td-delta{font-size:11px;text-align:right;padding-left:0}
-  .delta-neg{color:var(--green)}
-  .delta-pos{color:var(--red)}
-  .winner-tag{display:inline-block;background:var(--green-light);color:var(--green-dark);padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;border:0.5px solid var(--green-border)}
-  .th-name{text-align:right}
+/* ── TABLES ── */
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;padding:7px 10px;color:var(--text3);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.4px;border-bottom:0.5px solid var(--border);white-space:nowrap}
+td{padding:9px 10px;border-bottom:0.5px solid var(--border);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+.td-date{color:var(--text2);font-size:12px;white-space:nowrap}
+.td-w{font-weight:600;text-align:right;white-space:nowrap}
+.td-w.mine{color:var(--green)}
+.td-delta{font-size:10px;margin-top:1px;text-align:right}
+.delta-neg{color:var(--green)}
+.delta-pos{color:var(--red)}
+.winner-tag{display:inline-block;background:var(--green-light);color:var(--green-dark);padding:2px 7px;border-radius:10px;font-size:11px;font-weight:600;border:0.5px solid var(--green-border);white-space:nowrap}
+.th-r{text-align:right}
 
-  .metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
-  .metric{background:var(--surface2);border-radius:var(--radius);padding:12px 14px}
-  .metric-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px}
-  .metric-val{font-size:20px;font-weight:700}
+/* ── METRICS ── */
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.metric{background:var(--surface2);border-radius:var(--radius);padding:12px}
+.metric-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
+.metric-val{font-size:18px;font-weight:700}
 
-  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  .full{grid-column:1/-1}
-  .btn-sm{padding:9px 16px;background:var(--green);color:#fff;border:none;border-radius:var(--radius);font-size:13px;font-weight:600;cursor:pointer;margin-top:4px}
-  .btn-sm:hover{background:var(--green-dark)}
-  .loading{text-align:center;padding:40px;color:var(--text3);font-size:13px}
+/* ── FORMS ── */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.full{grid-column:1/-1}
+.btn-sm{padding:11px 16px;background:var(--green);color:#fff;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;margin-top:6px;min-height:44px;width:100%}
+.btn-sm:active{background:var(--green-dark)}
+.btn-danger{background:#e34948}
+.btn-danger:active{background:#b03030}
+.loading{text-align:center;padding:40px;color:var(--text3);font-size:13px}
 
-  @media(max-width:480px){
-    .metrics{grid-template-columns:repeat(2,1fr)}
-    .form-grid{grid-template-columns:1fr}
-    .full{grid-column:1}
-    .content{padding:14px}
-  }
+/* ── ADMIN ── */
+.admin-row{display:flex;gap:8px;align-items:flex-end;margin-bottom:10px;flex-wrap:wrap}
+.admin-row .field{flex:1;min-width:70px}
+.admin-row .field label{font-size:10px}
+.admin-row .field input{padding:8px;min-height:36px}
+.admin-badge{display:inline-block;background:#faeeda;color:#854f0b;border:0.5px solid #fac775;border-radius:10px;font-size:10px;font-weight:600;padding:2px 7px;margin-left:6px;vertical-align:middle}
+.edit-btn{background:none;border:0.5px solid var(--border-strong);border-radius:var(--radius);padding:4px 8px;font-size:11px;color:var(--text3);cursor:pointer;min-height:28px}
+.edit-btn:active{background:var(--surface2)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:390px){
+  .metrics{grid-template-columns:repeat(2,1fr)}
+  .form-grid{grid-template-columns:1fr}
+  .full{grid-column:1}
+  .content{padding:12px}
+  .card{padding:14px}
+}
+@media(min-width:600px){
+  .content{padding:20px}
+  .card{padding:20px}
+}
 </style>
 </head>
 <body>
 
+<!-- LOGIN -->
 <div id="loginScreen">
   <div class="login-logo">Gewicht<span>Wette</span></div>
   <div class="login-sub">Die Wette läuft — Abnehmen oder zahlen.</div>
@@ -158,13 +198,14 @@
     </div>
     <div class="field">
       <label>Passwort</label>
-      <input type="password" id="loginPass" placeholder="••••••">
+      <input type="password" id="loginPass" placeholder="••••••" autocomplete="current-password">
     </div>
     <div class="err hidden" id="loginErr"></div>
     <button class="btn-green" onclick="doLogin()">Anmelden</button>
   </div>
 </div>
 
+<!-- MAIN APP -->
 <div id="mainApp" class="hidden">
   <div class="topbar">
     <div class="topbar-logo">Gewicht<span>Wette</span></div>
@@ -174,20 +215,22 @@
     </div>
   </div>
   <div class="countdown-bar" id="countdownBar"></div>
-  <div class="tabs">
-    <div class="tab active" onclick="switchTab('eingabe',this)">⚖️ Mein Gewicht</div>
+  <div class="tabs" id="tabBar">
+    <div class="tab active" onclick="switchTab('eingabe',this)">⚖️ Gewicht</div>
     <div class="tab" onclick="switchTab('dashboard',this)">📊 Dashboard</div>
-    <div class="tab" onclick="switchTab('essen',this)">🍽️ Essen & Wette</div>
+    <div class="tab" onclick="switchTab('essen',this)">🍽️ Essen</div>
+    <div class="tab hidden" id="adminTab" onclick="switchTab('admin',this)">🔧 Admin</div>
   </div>
   <div class="content">
     <div id="tab-eingabe"></div>
     <div id="tab-dashboard" class="hidden"></div>
     <div id="tab-essen" class="hidden"></div>
+    <div id="tab-admin" class="hidden"></div>
   </div>
 </div>
 
 <script>
-const firebaseConfig = {
+const firebaseConfig={
   apiKey:"AIzaSyBv88JujGJhdUcKU-V5BQKIEXEZTZM1mMc",
   authDomain:"gewicht-wette.firebaseapp.com",
   databaseURL:"https://gewicht-wette-default-rtdb.europe-west1.firebasedatabase.app",
@@ -197,407 +240,419 @@ const firebaseConfig = {
   appId:"1:161345039342:web:e6c8e7ba1007368d3f7cff"
 };
 firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
+const db=firebase.database();
 
-// ── Config ──────────────────────────────────────────────────────────
-const USERS = {
-  PZu: { pass:'pzu123' },
-  CSt: { pass:'chris123' },
-  VBa: { pass:'vitalij123' }
-};
-const PLAYERS = ['PZu','CSt','VBa'];
-const COLORS  = { PZu:'#2a78d6', CSt:'#1baf7a', VBa:'#eda100' };
+const USERS={PZu:{pass:'pzu123'},CSt:{pass:'chris123'},VBa:{pass:'vitalij123'}};
+const PLAYERS=['PZu','CSt','VBa'];
+const COLORS={PZu:'#2a78d6',CSt:'#1baf7a',VBa:'#eda100'};
+const FUTURE_DATES=['2025-08-31','2025-10-31','2025-12-31','2026-02-28','2026-04-30','2026-06-30','2026-08-31','2026-10-31','2026-12-31'];
+const CURRENT_ROUND='2025-08-31';
 
-const FUTURE_DATES = [
-  '2025-08-31','2025-10-31','2025-12-31',
-  '2026-02-28','2026-04-30','2026-06-30',
-  '2026-08-31','2026-10-31','2026-12-31'
+// Historische Basisdaten (ergänzbar via Admin)
+const BASE_HISTORICAL=[
+  {date:'2023-06-01',PZu:87.4,CSt:85.1,VBa:116.2,winner:'CSt',restaurant:'bonabrasa',restaurantDate:''},
+  {date:'2024-01-31',PZu:90,CSt:81.6,VBa:115.9,winner:'CSt',restaurant:'brisket',restaurantDate:'2025-03-26'},
+  {date:'2024-04-30',PZu:85.5,CSt:83.3,VBa:119,winner:'PZu',restaurant:'la Taqueria',restaurantDate:'2025-04-23'},
+  {date:'2024-06-30',PZu:86.3,CSt:81.3,VBa:120.6,winner:'CSt',restaurant:'Texas Wild West',restaurantDate:'2025-08-06'},
+  {date:'2024-08-31',PZu:83.3,CSt:82.1,VBa:118.1,winner:'PZu',restaurant:'La Cote',restaurantDate:'2025-10-01'},
+  {date:'2024-10-30',PZu:86.4,CSt:83.2,VBa:114.6,winner:'VBa',restaurant:'',restaurantDate:''},
+  {date:'2024-12-31',PZu:92.6,CSt:82.6,VBa:119.9,winner:'CSt',restaurant:'',restaurantDate:''},
+  {date:'2025-02-28',PZu:86.7,CSt:83.7,VBa:119.4,winner:'PZu',restaurant:'',restaurantDate:''},
+  {date:'2025-04-30',PZu:78.5,CSt:84.1,VBa:119,winner:'PZu',restaurant:'',restaurantDate:''},
+  {date:'2025-06-30',PZu:78,CSt:84.5,VBa:113.8,winner:'VBa',restaurant:'',restaurantDate:''},
 ];
 
-// Historische Daten — interne Keys bleiben PZu/CSt/VBa
-const HISTORICAL = [
-  { date:'2023-06-01', PZu:87.4, CSt:85.1, VBa:116.2, winner:'CSt', restaurant:'bonabrasa',      restaurantDate:'' },
-  { date:'2024-01-31', PZu:90,   CSt:81.6, VBa:115.9, winner:'CSt', restaurant:'brisket',        restaurantDate:'2025-03-26' },
-  { date:'2024-04-30', PZu:85.5, CSt:83.3, VBa:119,   winner:'PZu', restaurant:'la Taqueria',    restaurantDate:'2025-04-23' },
-  { date:'2024-06-30', PZu:86.3, CSt:81.3, VBa:120.6, winner:'CSt', restaurant:'Texas Wild West', restaurantDate:'2025-08-06' },
-  { date:'2024-08-31', PZu:83.3, CSt:82.1, VBa:118.1, winner:'PZu', restaurant:'La Cote',        restaurantDate:'2025-10-01' },
-  { date:'2024-10-30', PZu:86.4, CSt:83.2, VBa:114.6, winner:'VBa', restaurant:'',               restaurantDate:'' },
-  { date:'2024-12-31', PZu:92.6, CSt:82.6, VBa:119.9, winner:'CSt', restaurant:'',               restaurantDate:'' },
-  { date:'2025-02-28', PZu:86.7, CSt:83.7, VBa:119.4, winner:'PZu', restaurant:'',               restaurantDate:'' },
-  { date:'2025-04-30', PZu:78.5, CSt:84.1, VBa:119,   winner:'PZu', restaurant:'',               restaurantDate:'' },
-  { date:'2025-06-30', PZu:78,   CSt:84.5, VBa:113.8, winner:'VBa', restaurant:'',               restaurantDate:'' },
-];
+let currentUser=null,charts={},cdTimer=null,submissions={};
+let HISTORICAL=[...BASE_HISTORICAL]; // wird aus Firebase überschrieben
 
-const CURRENT_ROUND = '2025-08-31';
-
-let currentUser = null;
-let charts = {};
-let cdTimer = null;
-let submissions = {};
-
-// ── Firebase ─────────────────────────────────────────────────────────
-function startListening() {
-  db.ref('rounds/' + CURRENT_ROUND).on('value', snap => {
-    submissions = snap.val() || {};
-    const active = document.querySelector('.tab.active');
-    if (!active) return;
-    const t = active.textContent;
-    if (t.includes('Gewicht')) renderEingabe();
-    if (t.includes('Dashboard')) renderDashboard();
+// ── Firebase ──────────────────────────────────────────────────────
+function startListening(){
+  // Gewichte der aktuellen Runde
+  db.ref('rounds/'+CURRENT_ROUND).on('value',snap=>{
+    submissions=snap.val()||{};
+    refreshActiveTab();
+  });
+  // Historische Daten aus Firebase laden (Admin-Ergänzungen)
+  db.ref('historical').on('value',snap=>{
+    const fbData=snap.val();
+    if(fbData){
+      // Merge: Firebase-Daten überschreiben/ergänzen BASE_HISTORICAL
+      const map={};
+      BASE_HISTORICAL.forEach(r=>map[r.date]={...r});
+      Object.values(fbData).forEach(r=>{if(r&&r.date)map[r.date]={...map[r.date],...r}});
+      HISTORICAL=Object.values(map).sort((a,b)=>a.date.localeCompare(b.date));
+    } else {
+      HISTORICAL=[...BASE_HISTORICAL];
+    }
+    refreshActiveTab();
   });
 }
-function stopListening() { db.ref('rounds/' + CURRENT_ROUND).off(); }
+function stopListening(){
+  db.ref('rounds/'+CURRENT_ROUND).off();
+  db.ref('historical').off();
+}
+function refreshActiveTab(){
+  const active=document.querySelector('.tab.active');
+  if(!active)return;
+  const t=active.textContent;
+  if(t.includes('Gewicht'))renderEingabe();
+  else if(t.includes('Dashboard'))renderDashboard();
+  else if(t.includes('Admin'))renderAdmin();
+}
 
-// ── Login ─────────────────────────────────────────────────────────────
-function doLogin() {
-  const user = document.getElementById('loginUser').value;
-  const pass = document.getElementById('loginPass').value;
-  if (!user) { showErr('Bitte einen Spieler auswählen.'); return; }
-  if (USERS[user].pass !== pass) { showErr('Falsches Passwort.'); return; }
+// ── Login ──────────────────────────────────────────────────────────
+function doLogin(){
+  const user=document.getElementById('loginUser').value;
+  const pass=document.getElementById('loginPass').value;
+  if(!user){showErr('Bitte einen Spieler auswählen.');return;}
+  if(USERS[user].pass!==pass){showErr('Falsches Passwort.');return;}
   document.getElementById('loginErr').classList.add('hidden');
-  currentUser = user;
+  currentUser=user;
   document.getElementById('loginScreen').classList.add('hidden');
   document.getElementById('mainApp').classList.remove('hidden');
-  document.getElementById('userPill').textContent = user;
+  document.getElementById('userPill').textContent=user;
+  // Admin-Tab nur für PZu
+  if(user==='PZu') document.getElementById('adminTab').classList.remove('hidden');
   startListening();
   startCountdown();
-  switchTab('eingabe', document.querySelector('.tab'));
+  switchTab('eingabe',document.querySelector('.tab'));
 }
-function showErr(msg) {
-  const e = document.getElementById('loginErr');
-  e.textContent = msg; e.classList.remove('hidden');
-}
-function doLogout() {
+function showErr(msg){const e=document.getElementById('loginErr');e.textContent=msg;e.classList.remove('hidden');}
+function doLogout(){
   stopListening();
-  if (cdTimer) clearInterval(cdTimer);
-  Object.values(charts).forEach(c => { try { c.destroy(); } catch {} });
-  charts = {}; currentUser = null; submissions = {};
+  if(cdTimer)clearInterval(cdTimer);
+  Object.values(charts).forEach(c=>{try{c.destroy();}catch{}});
+  charts={};currentUser=null;submissions={};HISTORICAL=[...BASE_HISTORICAL];
   document.getElementById('mainApp').classList.add('hidden');
   document.getElementById('loginScreen').classList.remove('hidden');
-  document.getElementById('loginPass').value = '';
-  document.getElementById('loginUser').value = '';
+  document.getElementById('loginPass').value='';
+  document.getElementById('loginUser').value='';
+  document.getElementById('adminTab').classList.add('hidden');
 }
 
-// ── Countdown ─────────────────────────────────────────────────────────
-function getNextDate() {
-  const now = new Date(); now.setHours(0,0,0,0);
-  return FUTURE_DATES.map(d => new Date(d+'T00:00:00')).find(d => d >= now) || null;
+// ── Countdown ──────────────────────────────────────────────────────
+function getNextDate(){
+  const now=new Date();now.setHours(0,0,0,0);
+  return FUTURE_DATES.map(d=>new Date(d+'T00:00:00')).find(d=>d>=now)||null;
 }
-function startCountdown() {
-  if (cdTimer) clearInterval(cdTimer);
-  updateCountdown();
-  cdTimer = setInterval(updateCountdown, 1000);
-}
-function updateCountdown() {
-  const el = document.getElementById('countdownBar');
-  const next = getNextDate();
-  if (!next) { el.innerHTML = ''; return; }
-  const todayMid = new Date(); todayMid.setHours(0,0,0,0);
-  const isToday = next.getTime() === todayMid.getTime();
-  const dateStr = next.toLocaleDateString('de-CH',{day:'2-digit',month:'long',year:'numeric'});
-  if (isToday) {
-    el.innerHTML = `<div class="cd-left"><div class="cd-label">Nächster Wiegetag</div><div class="cd-date">${dateStr}</div></div><div class="cd-today">🎯 Heute ist Wiegetag!</div>`;
-    return;
-  }
-  const diff = next - new Date();
-  const d = Math.floor(diff/86400000);
-  const h = Math.floor((diff%86400000)/3600000);
-  const m = Math.floor((diff%3600000)/60000);
-  const s = Math.floor((diff%60000)/1000);
-  el.innerHTML = `
-    <div class="cd-left"><div class="cd-label">Nächster Wiegetag</div><div class="cd-date">${dateStr}</div></div>
-    <div class="cd-units">
-      <div class="cd-block"><div class="cd-num">${String(d).padStart(2,'0')}</div><div class="cd-unit">Tage</div></div>
-      <div class="cd-sep">:</div>
-      <div class="cd-block"><div class="cd-num">${String(h).padStart(2,'0')}</div><div class="cd-unit">Std</div></div>
-      <div class="cd-sep">:</div>
-      <div class="cd-block"><div class="cd-num">${String(m).padStart(2,'0')}</div><div class="cd-unit">Min</div></div>
-      <div class="cd-sep">:</div>
-      <div class="cd-block"><div class="cd-num">${String(s).padStart(2,'0')}</div><div class="cd-unit">Sek</div></div>
-    </div>`;
+function startCountdown(){if(cdTimer)clearInterval(cdTimer);updateCountdown();cdTimer=setInterval(updateCountdown,1000);}
+function updateCountdown(){
+  const el=document.getElementById('countdownBar');
+  const next=getNextDate();
+  if(!next){el.innerHTML='';return;}
+  const todayMid=new Date();todayMid.setHours(0,0,0,0);
+  const isToday=next.getTime()===todayMid.getTime();
+  const dateStr=next.toLocaleDateString('de-CH',{day:'2-digit',month:'long',year:'numeric'});
+  if(isToday){el.innerHTML=`<div class="cd-left"><div class="cd-label">Nächster Wiegetag</div><div class="cd-date">${dateStr}</div></div><div class="cd-today">🎯 Heute ist Wiegetag!</div>`;return;}
+  const diff=next-new Date();
+  const d=Math.floor(diff/86400000),h=Math.floor((diff%86400000)/3600000),m=Math.floor((diff%3600000)/60000),s=Math.floor((diff%60000)/1000);
+  el.innerHTML=`<div class="cd-left"><div class="cd-label">Nächster Wiegetag</div><div class="cd-date">${dateStr}</div></div>
+  <div class="cd-units">
+    <div class="cd-block"><div class="cd-num">${String(d).padStart(2,'0')}</div><div class="cd-unit">Tage</div></div>
+    <div class="cd-sep">:</div>
+    <div class="cd-block"><div class="cd-num">${String(h).padStart(2,'0')}</div><div class="cd-unit">Std</div></div>
+    <div class="cd-sep">:</div>
+    <div class="cd-block"><div class="cd-num">${String(m).padStart(2,'0')}</div><div class="cd-unit">Min</div></div>
+    <div class="cd-sep">:</div>
+    <div class="cd-block"><div class="cd-num">${String(s).padStart(2,'0')}</div><div class="cd-unit">Sek</div></div>
+  </div>`;
 }
 
-// ── Tabs ──────────────────────────────────────────────────────────────
-function switchTab(name, el) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  if (el) el.classList.add('active');
-  ['eingabe','dashboard','essen'].forEach(t => document.getElementById('tab-'+t).classList.add('hidden'));
+// ── Tabs ───────────────────────────────────────────────────────────
+function switchTab(name,el){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  if(el)el.classList.add('active');
+  ['eingabe','dashboard','essen','admin'].forEach(t=>document.getElementById('tab-'+t).classList.add('hidden'));
   document.getElementById('tab-'+name).classList.remove('hidden');
-  if (name==='eingabe')   renderEingabe();
-  if (name==='dashboard') renderDashboard();
-  if (name==='essen')     renderEssen();
+  if(name==='eingabe')renderEingabe();
+  else if(name==='dashboard')renderDashboard();
+  else if(name==='essen')renderEssen();
+  else if(name==='admin')renderAdmin();
 }
 
-// ── Helpers ───────────────────────────────────────────────────────────
-function isInputDay() {
-  const t = new Date(); t.setHours(0,0,0,0);
-  return t.getTime() === new Date(CURRENT_ROUND+'T00:00:00').getTime();
-}
-function allSubmitted() { return PLAYERS.every(p => submissions[p] !== undefined); }
-function getPending()   { return PLAYERS.filter(p => submissions[p] === undefined); }
+// ── Helpers ────────────────────────────────────────────────────────
+function isInputDay(){const t=new Date();t.setHours(0,0,0,0);return t.getTime()===new Date(CURRENT_ROUND+'T00:00:00').getTime();}
+function allSubmitted(){return PLAYERS.every(p=>submissions[p]!==undefined);}
+function getPending(){return PLAYERS.filter(p=>submissions[p]===undefined);}
 
-// ── Gewichtstabelle ───────────────────────────────────────────────────
-function buildWeightTable() {
-  // Alle Runden zusammenbauen (historisch + aktuelle falls alle eingegeben)
-  const allRounds = [...HISTORICAL];
-  if (allSubmitted()) {
-    allRounds.push({ date: CURRENT_ROUND, ...submissions });
-  }
-  // Neueste oben
-  const rows = [...allRounds].reverse();
-
-  let html = `<div class="card">
-    <h3>📋 Gewichtsverlauf</h3>
-    <div class="weight-table-wrap">
-    <table>
-      <thead><tr>
-        <th>Datum</th>
-        ${PLAYERS.map(p => `<th class="th-name">${p}</th>`).join('')}
-        <th class="th-name">Sieger</th>
-      </tr></thead>
-      <tbody>`;
-
-  rows.forEach((r, i) => {
-    const prevR = rows[i + 1]; // vorherige Runde (weil umgekehrt sortiert)
-    const isLatest = i === 0;
-    html += `<tr style="${isLatest ? 'background:var(--surface2)' : ''}">`;
-    html += `<td class="td-date">${r.date.slice(0,7)}${isLatest ? ' <span style="font-size:10px;color:var(--green);font-weight:600">NEU</span>' : ''}</td>`;
-
-    PLAYERS.forEach(p => {
-      const w = r[p];
-      const isMine = p === currentUser;
-      if (w === undefined || w === null) {
-        html += `<td class="td-weight" style="color:var(--text3)">—</td>`;
-      } else {
-        let deltaHTML = '';
-        if (prevR && prevR[p] !== undefined) {
-          const d = w - prevR[p];
-          const sign = d > 0 ? '+' : '';
-          const cls = d < 0 ? 'delta-neg' : d > 0 ? 'delta-pos' : '';
-          deltaHTML = `<div class="td-delta ${cls}" style="font-size:10px;margin-top:1px">${sign}${d.toFixed(1)}</div>`;
-        }
-        html += `<td class="td-weight${isMine ? ' mine' : ''}">${w.toFixed(1)} kg${deltaHTML}</td>`;
+// ── Gewichtstabelle ────────────────────────────────────────────────
+function buildWeightTable(){
+  const allRounds=[...HISTORICAL];
+  if(allSubmitted())allRounds.push({date:CURRENT_ROUND,...submissions});
+  const rows=[...allRounds].reverse();
+  let html=`<div class="card"><h3>📋 Gewichtsverlauf</h3><div class="table-wrap"><table>
+    <thead><tr><th>Datum</th>${PLAYERS.map(p=>`<th class="th-r">${p}</th>`).join('')}<th class="th-r">Sieger</th></tr></thead><tbody>`;
+  rows.forEach((r,i)=>{
+    const prev=rows[i+1];
+    const isLatest=i===0;
+    html+=`<tr style="${isLatest?'background:var(--surface2)':''}">`;
+    html+=`<td class="td-date">${r.date.slice(0,7)}${isLatest?' <span style="font-size:10px;color:var(--green);font-weight:700">NEU</span>':''}</td>`;
+    PLAYERS.forEach(p=>{
+      const w=r[p];
+      if(w===undefined||w===null){html+=`<td class="td-w" style="color:var(--text3)">—</td>`;return;}
+      let delta='';
+      if(prev&&prev[p]!==undefined){
+        const d=w-prev[p];
+        const sign=d>0?'+':'';
+        const cls=d<0?'delta-neg':d>0?'delta-pos':'';
+        delta=`<div class="td-delta ${cls}">${sign}${d.toFixed(1)}</div>`;
       }
+      html+=`<td class="td-w${p===currentUser?' mine':''}">${w.toFixed(1)} kg${delta}</td>`;
     });
-
-    // Sieger
-    const w = r.winner || '';
-    html += `<td style="text-align:right">${w ? `<span class="winner-tag">${w}</span>` : '<span style="color:var(--text3);font-size:12px">—</span>'}</td>`;
-    html += '</tr>';
+    html+=`<td style="text-align:right">${r.winner?`<span class="winner-tag">${r.winner}</span>`:'<span style="color:var(--text3)">—</span>'}</td></tr>`;
   });
-
-  html += `</tbody></table></div></div>`;
+  html+=`</tbody></table></div></div>`;
   return html;
 }
 
-// ── Tab: Eingabe ──────────────────────────────────────────────────────
-function renderEingabe() {
-  const el = document.getElementById('tab-eingabe');
-  const myDone = submissions[currentUser] !== undefined;
-  const allDone = allSubmitted();
-  const pending = getPending();
-  const inputDay = isInputDay();
+// ── Tab: Eingabe ───────────────────────────────────────────────────
+function renderEingabe(){
+  const el=document.getElementById('tab-eingabe');
+  const myDone=submissions[currentUser]!==undefined;
+  const allDone=allSubmitted();
+  const pending=getPending();
+  const inputDay=isInputDay();
 
-  // Banner
-  let topBanner = '';
-  if (!inputDay) {
-    const next = getNextDate();
-    const ds = next ? next.toLocaleDateString('de-CH',{day:'2-digit',month:'long',year:'numeric'}) : '—';
-    topBanner = `<div class="banner amber"><p>📅 Kein Eingabetag. Nächster Stichtag: <strong>${ds}</strong></p></div>`;
+  let topBanner='';
+  if(!inputDay){
+    const next=getNextDate();
+    const ds=next?next.toLocaleDateString('de-CH',{day:'2-digit',month:'long',year:'numeric'}):'—';
+    topBanner=`<div class="banner amber"><p>📅 Kein Eingabetag. Nächster Stichtag: <strong>${ds}</strong></p></div>`;
   }
 
-  // Status
-  let statusRow = '<div class="status-row">';
-  PLAYERS.forEach(p => {
-    const done = submissions[p] !== undefined;
-    statusRow += `<div class="status-pill"><span class="dot ${done?'dot-green':'dot-amber'}"></span>${p}: <strong>${done?'✓ eingegeben':'ausstehend'}</strong></div>`;
+  let statusRow='<div class="status-row">';
+  PLAYERS.forEach(p=>{
+    const done=submissions[p]!==undefined;
+    statusRow+=`<div class="status-pill"><span class="dot ${done?'dot-green':'dot-amber'}"></span>${p}: <strong>${done?'✓':'ausstehend'}</strong></div>`;
   });
-  statusRow += '</div>';
+  statusRow+='</div>';
 
-  // WhatsApp
-  let reminder = '';
-  const others = pending.filter(p => p !== currentUser);
-  if (others.length > 0 && inputDay) {
-    const names = others.join(' & ');
-    const msg = encodeURIComponent(`Hey ${names}! 💪 Bitte heute noch dein Gewicht in die GewichtWette App eingeben. Stichtag: ${CURRENT_ROUND}`);
-    reminder = `<div class="banner amber">
-      <p>⏳ <strong>${names}</strong> ${others.length>1?'haben':'hat'} noch nicht eingegeben.</p>
-      <a class="wa-btn" href="https://wa.me/?text=${msg}" target="_blank">💬 WhatsApp</a>
-    </div>`;
+  let reminder='';
+  const others=pending.filter(p=>p!==currentUser);
+  if(others.length>0&&inputDay){
+    const names=others.join(' & ');
+    const msg=encodeURIComponent(`Hey ${names}! 💪 Bitte heute noch dein Gewicht eingeben. Stichtag: ${CURRENT_ROUND}`);
+    reminder=`<div class="banner amber"><p>⏳ <strong>${names}</strong> noch nicht eingegeben.</p><a class="wa-btn" href="https://wa.me/?text=${msg}" target="_blank">💬 WhatsApp</a></div>`;
   }
 
-  // Eingabefeld
-  let inputArea = '';
-  if (!inputDay) {
-    inputArea = `<div class="card"><div class="locked-box">🔒 Eingabe nur am Stichtag (${CURRENT_ROUND}) möglich.</div></div>`;
-  } else if (myDone) {
-    inputArea = `<div class="card"><div class="done-box">✅ Du hast <strong>${submissions[currentUser].toFixed(1)} kg</strong> eingetragen.${allDone?' Alle sind dabei!':' Warte auf die anderen...'}</div></div>`;
-  } else {
-    inputArea = `<div class="card">
-      <h3>⚖️ Gewicht eintragen — ${CURRENT_ROUND}</h3>
-      <div class="field" style="margin-bottom:12px">
-        <label>Dein Gewicht (kg)</label>
-        <input class="weight-input" type="number" id="wInput" step="0.1" min="30" max="300" placeholder="83.4">
-      </div>
-      <button class="btn-green" onclick="saveWeight()">Gewicht speichern</button>
-    </div>`;
+  let inputArea='';
+  if(!inputDay){
+    inputArea=`<div class="card"><div class="locked-box">🔒 Eingabe nur am Stichtag (${CURRENT_ROUND}) möglich.</div></div>`;
+  }else if(myDone){
+    inputArea=`<div class="card"><div class="done-box">✅ Du hast <strong>${submissions[currentUser].toFixed(1)} kg</strong> eingetragen.${allDone?' Alle sind dabei!':' Warte auf die anderen...'}</div></div>`;
+  }else{
+    inputArea=`<div class="card"><h3>⚖️ Gewicht eintragen — ${CURRENT_ROUND}</h3>
+      <div class="field" style="margin-bottom:12px"><label>Dein Gewicht (kg)</label>
+      <input class="weight-input" type="number" id="wInput" step="0.1" min="30" max="300" placeholder="83.4" inputmode="decimal"></div>
+      <button class="btn-green" onclick="saveWeight()">Gewicht speichern</button></div>`;
   }
 
-  // Ergebnis-Reveal
-  let reveal = '';
-  if (allDone) {
-    const prev = HISTORICAL[HISTORICAL.length-1];
-    let bestDelta = Infinity, bestP = '';
-    PLAYERS.forEach(p => { const d = submissions[p]-(prev[p]||submissions[p]); if(d<bestDelta){bestDelta=d;bestP=p;} });
-    reveal = `<div class="card"><h3>🏆 Ergebnis dieser Runde</h3>
-      <table><thead><tr><th>Spieler</th><th>Vorher</th><th>Jetzt</th><th style="text-align:right">Differenz</th></tr></thead><tbody>`;
-    PLAYERS.forEach(p => {
-      const cur=submissions[p], prv=prev[p]||cur, d=cur-prv;
-      const cls=d<0?'delta-neg':d>0?'delta-pos':'';
-      const win=p===bestP?' <span class="winner-tag">🏆 Gewinner</span>':'';
-      reveal+=`<tr><td><strong>${p}</strong>${win}</td><td>${prv.toFixed(1)} kg</td><td>${cur.toFixed(1)} kg</td><td class="${cls}" style="text-align:right">${d>0?'+':''}${d.toFixed(1)} kg</td></tr>`;
+  let reveal='';
+  if(allDone){
+    const prev=HISTORICAL[HISTORICAL.length-1];
+    let bestDelta=Infinity,bestP='';
+    PLAYERS.forEach(p=>{const d=submissions[p]-(prev[p]||submissions[p]);if(d<bestDelta){bestDelta=d;bestP=p;}});
+    reveal=`<div class="card"><h3>🏆 Ergebnis dieser Runde</h3><div class="table-wrap"><table>
+      <thead><tr><th>Spieler</th><th>Vorher</th><th>Jetzt</th><th class="th-r">Diff</th></tr></thead><tbody>`;
+    PLAYERS.forEach(p=>{
+      const cur=submissions[p],prv=prev[p]||cur,d=cur-prv;
+      reveal+=`<tr><td><strong>${p}</strong>${p===bestP?' <span class="winner-tag">🏆</span>':''}</td><td>${prv.toFixed(1)} kg</td><td>${cur.toFixed(1)} kg</td><td class="${d<0?'delta-neg':d>0?'delta-pos':''}" style="text-align:right">${d>0?'+':''}${d.toFixed(1)} kg</td></tr>`;
     });
-    reveal += '</tbody></table></div>';
-  } else if (myDone) {
-    reveal = `<div class="card"><div class="locked-box">👁️ Gewichte der anderen sichtbar, sobald alle eingegeben haben.</div></div>`;
+    reveal+='</tbody></table></div></div>';
+  }else if(myDone){
+    reveal=`<div class="card"><div class="locked-box">👁️ Gewichte sichtbar, sobald alle eingegeben haben.</div></div>`;
   }
 
-  // Tabelle immer anzeigen
-  const table = buildWeightTable();
-
-  el.innerHTML = topBanner + statusRow + reminder + inputArea + reveal + table;
+  el.innerHTML=topBanner+statusRow+reminder+inputArea+reveal+buildWeightTable();
 }
 
-async function saveWeight() {
-  const val = parseFloat(document.getElementById('wInput').value);
-  if (!val || val < 30) { alert('Bitte ein gültiges Gewicht eingeben.'); return; }
-  try {
-    await db.ref(`rounds/${CURRENT_ROUND}/${currentUser}`).set(val);
-  } catch(e) { alert('Fehler: ' + e.message); }
+async function saveWeight(){
+  const val=parseFloat(document.getElementById('wInput').value);
+  if(!val||val<30){alert('Bitte ein gültiges Gewicht eingeben.');return;}
+  try{await db.ref(`rounds/${CURRENT_ROUND}/${currentUser}`).set(val);}
+  catch(e){alert('Fehler: '+e.message);}
 }
 
-// ── Tab: Dashboard ────────────────────────────────────────────────────
-function renderDashboard() {
-  const el = document.getElementById('tab-dashboard');
-  const allDone = allSubmitted();
-  const allRounds = [...HISTORICAL];
-  if (allDone) allRounds.push({ date:CURRENT_ROUND, ...submissions });
-
-  const labels = allRounds.map(r => r.date.slice(0,7));
-  const wins = { PZu:0, CSt:0, VBa:0 };
-  allRounds.forEach(r => { if (r.winner && wins[r.winner]!==undefined) wins[r.winner]++; });
-  const topW = Object.entries(wins).sort((a,b)=>b[1]-a[1])[0];
-  const last = allRounds[allRounds.length-1];
-  const prev = allRounds[allRounds.length-2]||last;
-  let bestDelta=Infinity, bestP='';
+// ── Tab: Dashboard ─────────────────────────────────────────────────
+function renderDashboard(){
+  const el=document.getElementById('tab-dashboard');
+  const allDone=allSubmitted();
+  const allRounds=[...HISTORICAL];
+  if(allDone)allRounds.push({date:CURRENT_ROUND,...submissions});
+  const labels=allRounds.map(r=>r.date.slice(0,7));
+  const wins={PZu:0,CSt:0,VBa:0};
+  allRounds.forEach(r=>{if(r.winner&&wins[r.winner]!==undefined)wins[r.winner]++;});
+  const topW=Object.entries(wins).sort((a,b)=>b[1]-a[1])[0];
+  const last=allRounds[allRounds.length-1],prev=allRounds[allRounds.length-2]||last;
+  let bestDelta=Infinity,bestP='';
   PLAYERS.forEach(p=>{const d=(last[p]||0)-(prev[p]||0);if(d<bestDelta){bestDelta=d;bestP=p;}});
 
-  el.innerHTML = `
+  el.innerHTML=`
     <div class="metrics">
-      <div class="metric"><div class="metric-label">Gesamtsieger</div><div class="metric-val" style="font-size:16px">${topW[0]}<br><span style="font-size:12px;color:var(--text3)">${topW[1]} Siege</span></div></div>
-      <div class="metric"><div class="metric-label">Letzte Runde</div><div class="metric-val" style="font-size:16px">${bestP}<br><span style="font-size:12px;color:var(--green)">${bestDelta<0?bestDelta.toFixed(1)+' kg':'-'}</span></div></div>
-      <div class="metric"><div class="metric-label">Runden total</div><div class="metric-val">${allRounds.length}</div></div>
+      <div class="metric"><div class="metric-label">Gesamtsieger</div><div class="metric-val" style="font-size:15px">${topW[0]}<br><span style="font-size:11px;color:var(--text3)">${topW[1]} Siege</span></div></div>
+      <div class="metric"><div class="metric-label">Letzte Runde</div><div class="metric-val" style="font-size:15px">${bestP}<br><span style="font-size:11px;color:var(--green)">${bestDelta<0?bestDelta.toFixed(1)+' kg':'-'}</span></div></div>
+      <div class="metric"><div class="metric-label">Runden</div><div class="metric-val">${allRounds.length}</div></div>
     </div>
     <div class="card"><h3>Gewichtsverlauf (kg)</h3>
-      <div style="display:flex;gap:14px;margin-bottom:10px;flex-wrap:wrap">
-        ${PLAYERS.map(p=>`<span style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text2)"><span style="width:10px;height:10px;border-radius:2px;background:${COLORS[p]};display:inline-block"></span>${p}</span>`).join('')}
+      <div style="display:flex;gap:12px;margin-bottom:10px;flex-wrap:wrap">
+        ${PLAYERS.map(p=>`<span style="display:flex;align-items:center;gap:4px;font-size:12px"><span style="width:10px;height:10px;border-radius:2px;background:${COLORS[p]};flex-shrink:0"></span>${p}</span>`).join('')}
       </div>
-      <div style="position:relative;height:240px"><canvas id="cLine" role="img" aria-label="Gewichtsverlauf">.</canvas></div>
+      <div style="position:relative;height:clamp(180px,45vw,260px)"><canvas id="cLine" role="img" aria-label="Verlauf">.</canvas></div>
     </div>
     <div class="card"><h3>Veränderung pro Runde (kg)</h3>
-      <div style="display:flex;gap:14px;margin-bottom:10px;flex-wrap:wrap">
-        ${PLAYERS.map(p=>`<span style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text2)"><span style="width:10px;height:10px;border-radius:2px;background:${COLORS[p]};display:inline-block"></span>${p}</span>`).join('')}
+      <div style="display:flex;gap:12px;margin-bottom:10px;flex-wrap:wrap">
+        ${PLAYERS.map(p=>`<span style="display:flex;align-items:center;gap:4px;font-size:12px"><span style="width:10px;height:10px;border-radius:2px;background:${COLORS[p]};flex-shrink:0"></span>${p}</span>`).join('')}
       </div>
-      <div style="position:relative;height:200px"><canvas id="cDelta" role="img" aria-label="Veränderungen">.</canvas></div>
+      <div style="position:relative;height:clamp(160px,40vw,220px)"><canvas id="cDelta" role="img" aria-label="Veränderungen">.</canvas></div>
     </div>
     <div class="card"><h3>Gesamtveränderung seit Start (kg)</h3>
-      <div style="position:relative;height:130px"><canvas id="cTotal" role="img" aria-label="Gesamtveränderung">.</canvas></div>
+      <div style="position:relative;height:clamp(100px,25vw,140px)"><canvas id="cTotal" role="img" aria-label="Gesamt">.</canvas></div>
     </div>
     <div class="card"><h3>Siegertabelle</h3>
       <table><thead><tr><th>Spieler</th><th>Siege</th></tr></thead><tbody>
-        ${Object.entries(wins).sort((a,b)=>b[1]-a[1]).map(([p,w])=>`
-          <tr><td>${p}${w===topW[1]?' <span class="winner-tag">🏆</span>':''}</td><td>${w}</td></tr>`).join('')}
-      </tbody></table>
-    </div>`;
+        ${Object.entries(wins).sort((a,b)=>b[1]-a[1]).map(([p,w])=>`<tr><td>${p}${w===topW[1]?' <span class="winner-tag">🏆</span>':''}</td><td>${w}</td></tr>`).join('')}
+      </tbody></table></div>`;
 
-  if(charts.line){charts.line.destroy();}
-  if(charts.delta){charts.delta.destroy();}
-  if(charts.total){charts.total.destroy();}
-  const tc='#898781';
+  ['line','delta','total'].forEach(k=>{if(charts[k]){charts[k].destroy();}});
+  const tc='#898781',gc='rgba(100,100,100,0.1)';
 
-  charts.line=new Chart(document.getElementById('cLine'),{type:'line',data:{labels,datasets:PLAYERS.map(p=>({
-    label:p,data:allRounds.map(r=>r[p]||null),borderColor:COLORS[p],backgroundColor:COLORS[p]+'15',tension:0.3,pointRadius:4,borderWidth:2
-  }))},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
-    scales:{x:{ticks:{color:tc,font:{size:10},maxRotation:45},grid:{color:'#2c2c2a20'}},
-            y:{ticks:{color:tc,callback:v=>v+'kg'},grid:{color:'#2c2c2a20'}}}}});
+  charts.line=new Chart(document.getElementById('cLine'),{type:'line',data:{labels,datasets:PLAYERS.map(p=>({label:p,data:allRounds.map(r=>r[p]||null),borderColor:COLORS[p],backgroundColor:COLORS[p]+'15',tension:0.3,pointRadius:3,borderWidth:2}))},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:tc,font:{size:9},maxRotation:45},grid:{color:gc}},y:{ticks:{color:tc,callback:v=>v+'kg',font:{size:9}},grid:{color:gc}}}}});
 
-  const dLabels=labels.slice(1);
-  const deltas={};PLAYERS.forEach(p=>{deltas[p]=[];});
-  for(let i=1;i<allRounds.length;i++) PLAYERS.forEach(p=>deltas[p].push(parseFloat(((allRounds[i][p]||0)-(allRounds[i-1][p]||0)).toFixed(1))));
+  const dLabels=labels.slice(1),deltas={};
+  PLAYERS.forEach(p=>{deltas[p]=[];});
+  for(let i=1;i<allRounds.length;i++)PLAYERS.forEach(p=>deltas[p].push(parseFloat(((allRounds[i][p]||0)-(allRounds[i-1][p]||0)).toFixed(1))));
+  charts.delta=new Chart(document.getElementById('cDelta'),{type:'bar',data:{labels:dLabels,datasets:PLAYERS.map(p=>({label:p,data:deltas[p],backgroundColor:COLORS[p],borderRadius:2}))},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:tc,font:{size:9},maxRotation:45},grid:{color:gc}},y:{ticks:{color:tc,callback:v=>v+'kg',font:{size:9}},grid:{color:gc}}}}});
 
-  charts.delta=new Chart(document.getElementById('cDelta'),{type:'bar',data:{labels:dLabels,datasets:PLAYERS.map(p=>({
-    label:p,data:deltas[p],backgroundColor:COLORS[p],borderRadius:3
-  }))},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
-    scales:{x:{ticks:{color:tc,font:{size:10},maxRotation:45},grid:{color:'#2c2c2a20'}},
-            y:{ticks:{color:tc,callback:v=>v+'kg'},grid:{color:'#2c2c2a20'}}}}});
-
-  const first=allRounds[0];
-  const totalD=PLAYERS.map(p=>parseFloat(((allRounds[allRounds.length-1][p]||0)-(first[p]||0)).toFixed(1)));
-  charts.total=new Chart(document.getElementById('cTotal'),{type:'bar',data:{labels:PLAYERS,datasets:[{
-    data:totalD,backgroundColor:totalD.map(v=>v<0?'#1baf7a':'#e34948'),borderRadius:4
-  }]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
-    scales:{x:{ticks:{color:tc,callback:v=>v+'kg'},grid:{color:'#2c2c2a20'}},
-            y:{ticks:{color:tc},grid:{color:'#2c2c2a20'}}}}});
+  const first=allRounds[0],totalD=PLAYERS.map(p=>parseFloat(((allRounds[allRounds.length-1][p]||0)-(first[p]||0)).toFixed(1)));
+  charts.total=new Chart(document.getElementById('cTotal'),{type:'bar',data:{labels:PLAYERS,datasets:[{data:totalD,backgroundColor:totalD.map(v=>v<0?'#1baf7a':'#e34948'),borderRadius:3}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:tc,callback:v=>v+'kg',font:{size:9}},grid:{color:gc}},y:{ticks:{color:tc,font:{size:10}},grid:{color:gc}}}}});
 }
 
-// ── Tab: Essen ────────────────────────────────────────────────────────
-async function renderEssen() {
-  const el = document.getElementById('tab-essen');
-  el.innerHTML = '<div class="loading">Wird geladen…</div>';
-  let essenData = {};
-  try { const snap=await db.ref('essen').get(); essenData=snap.val()||{}; } catch {}
-
-  const combined = HISTORICAL.map(r => {
-    const fb = essenData[r.date.replace(/-/g,'_')]||{};
-    return { date:r.date, winner:r.winner||'—',
-      restaurant:fb.restaurant||r.restaurant||'',
-      restaurantDate:fb.restaurantDate||r.restaurantDate||'' };
+// ── Tab: Essen ─────────────────────────────────────────────────────
+async function renderEssen(){
+  const el=document.getElementById('tab-essen');
+  el.innerHTML='<div class="loading">Wird geladen…</div>';
+  let essenData={};
+  try{const snap=await db.ref('essen').get();essenData=snap.val()||{};}catch{}
+  const combined=HISTORICAL.map(r=>{
+    const fb=essenData[r.date.replace(/-/g,'_')]||{};
+    return{date:r.date,winner:r.winner||'—',restaurant:fb.restaurant||r.restaurant||'',restaurantDate:fb.restaurantDate||r.restaurantDate||''};
   });
-  const pendingCount = combined.filter(r=>!r.restaurant).length;
-
-  el.innerHTML = `
+  const pendingCount=combined.filter(r=>!r.restaurant).length;
+  el.innerHTML=`
     ${pendingCount>0?`<div class="banner amber"><p>⏳ <strong>${pendingCount} Runden</strong> noch ohne Restaurant-Eintrag.</p></div>`:''}
-    <div class="card">
-      <h3>✏️ Essen-Eintrag hinzufügen</h3>
+    <div class="card"><h3>✏️ Essen eintragen</h3>
       <div class="form-grid">
-        <div class="field"><label>Runde</label>
-          <select id="eRound">${HISTORICAL.map(r=>`<option value="${r.date}">${r.date}</option>`).join('')}</select></div>
-        <div class="field"><label>Restaurant</label><input type="text" id="eRestaurant" placeholder="z.B. bonabrasa"></div>
+        <div class="field"><label>Runde</label><select id="eRound">${HISTORICAL.map(r=>`<option value="${r.date}">${r.date.slice(0,7)}</option>`).join('')}</select></div>
+        <div class="field"><label>Restaurant</label><input type="text" id="eRestaurant" placeholder="bonabrasa"></div>
         <div class="field full"><label>Datum des Essens</label><input type="date" id="eDate"></div>
       </div>
-      <button class="btn-sm" onclick="saveEssen()">Eintrag speichern</button>
+      <button class="btn-sm" onclick="saveEssen()">Speichern</button>
     </div>
-    <div class="card"><h3>🏆 Alle Runden</h3>
-      <table><thead><tr><th>Runde</th><th>Gewinner</th><th>Restaurant</th><th>Datum Essen</th></tr></thead><tbody>
+    <div class="card"><h3>🏆 Alle Runden</h3><div class="table-wrap"><table>
+      <thead><tr><th>Runde</th><th>Sieger</th><th>Restaurant</th><th>Datum</th></tr></thead><tbody>
         ${[...combined].reverse().map(r=>`<tr>
           <td>${r.date.slice(0,7)}</td>
           <td>${r.winner&&r.winner!=='—'?`<span class="winner-tag">${r.winner}</span>`:'—'}</td>
-          <td>${r.restaurant||'<span style="color:var(--text3)">—</span>'}</td>
-          <td>${r.restaurantDate?r.restaurantDate.slice(0,10):'<span style="color:var(--text3)">—</span>'}</td>
+          <td style="font-size:12px">${r.restaurant||'<span style="color:var(--text3)">—</span>'}</td>
+          <td style="font-size:12px">${r.restaurantDate?r.restaurantDate.slice(0,10):'<span style="color:var(--text3)">—</span>'}</td>
         </tr>`).join('')}
-      </tbody></table>
-    </div>`;
+      </tbody></table></div></div>`;
 }
-
-async function saveEssen() {
+async function saveEssen(){
   const round=document.getElementById('eRound').value;
   const restaurant=document.getElementById('eRestaurant').value.trim();
   const date=document.getElementById('eDate').value;
   if(!restaurant){alert('Bitte Restaurant eingeben.');return;}
-  try {
-    await db.ref(`essen/${round.replace(/-/g,'_')}`).set({restaurant,restaurantDate:date});
-    renderEssen();
-  } catch(e){alert('Fehler: '+e.message);}
+  try{await db.ref(`essen/${round.replace(/-/g,'_')}`).set({restaurant,restaurantDate:date});renderEssen();}
+  catch(e){alert('Fehler: '+e.message);}
+}
+
+// ── Tab: Admin (nur PZu) ───────────────────────────────────────────
+function renderAdmin(){
+  if(currentUser!=='PZu'){document.getElementById('tab-admin').innerHTML='<div class="locked-box">🔒 Kein Zugriff.</div>';return;}
+  const el=document.getElementById('tab-admin');
+  const rows=[...HISTORICAL].reverse();
+
+  let rowsHTML='';
+  rows.forEach(r=>{
+    rowsHTML+=`<tr id="row-${r.date}">
+      <td class="td-date">${r.date.slice(0,7)}</td>
+      ${PLAYERS.map(p=>`<td class="td-w">${r[p]!==undefined?r[p].toFixed(1):'—'}</td>`).join('')}
+      <td>${r.winner?`<span class="winner-tag">${r.winner}</span>`:'—'}</td>
+      <td><button class="edit-btn" onclick="editRow('${r.date}')">✏️</button></td>
+    </tr>`;
+  });
+
+  el.innerHTML=`
+    <div class="card">
+      <h3>🔧 Admin <span class="admin-badge">Nur PZu</span></h3>
+      <p style="font-size:13px;color:var(--text3);margin-bottom:14px">Hier kannst du historische Daten bearbeiten und neue Runden hinzufügen. Alle Änderungen werden in Firebase gespeichert.</p>
+
+      <h3 style="margin-bottom:10px">➕ Neue Runde hinzufügen</h3>
+      <div class="form-grid">
+        <div class="field full"><label>Datum (YYYY-MM-DD)</label><input type="date" id="aDate"></div>
+        ${PLAYERS.map(p=>`<div class="field"><label>${p} (kg)</label><input type="number" id="a${p}" step="0.1" min="30" max="300" placeholder="0.0" inputmode="decimal"></div>`).join('')}
+        <div class="field"><label>Sieger</label><select id="aWinner"><option value="">— keiner —</option>${PLAYERS.map(p=>`<option>${p}</option>`).join('')}</select></div>
+      </div>
+      <button class="btn-sm" onclick="adminAddRow()">Runde hinzufügen</button>
+    </div>
+
+    <div class="card">
+      <h3>📋 Historische Daten bearbeiten</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Datum</th>${PLAYERS.map(p=>`<th class="th-r">${p}</th>`).join('')}<th>Sieger</th><th></th></tr></thead>
+        <tbody id="adminTableBody">${rowsHTML}</tbody>
+      </table></div>
+    </div>`;
+}
+
+function editRow(date){
+  const r=HISTORICAL.find(x=>x.date===date);
+  if(!r)return;
+  const tbody=document.getElementById('adminTableBody');
+  const row=document.getElementById('row-'+date);
+  row.innerHTML=`
+    <td class="td-date" style="font-size:11px">${date.slice(0,7)}</td>
+    ${PLAYERS.map(p=>`<td><input type="number" id="e${p}-${date}" value="${r[p]||''}" step="0.1" min="30" max="300" style="width:60px;padding:4px 6px;border:0.5px solid var(--border-strong);border-radius:4px;background:var(--surface2);color:var(--text);font-size:12px" inputmode="decimal"></td>`).join('')}
+    <td><select id="eW-${date}" style="padding:4px 6px;border:0.5px solid var(--border-strong);border-radius:4px;background:var(--surface2);color:var(--text);font-size:12px">
+      <option value="">—</option>${PLAYERS.map(p=>`<option${r.winner===p?' selected':''}>${p}</option>`).join('')}
+    </select></td>
+    <td style="display:flex;gap:4px">
+      <button class="edit-btn" style="background:var(--green);color:#fff;border-color:var(--green)" onclick="saveRow('${date}')">✓</button>
+      <button class="edit-btn" onclick="renderAdmin()">✕</button>
+    </td>`;
+}
+
+async function saveRow(date){
+  const data={date};
+  PLAYERS.forEach(p=>{
+    const v=parseFloat(document.getElementById(`e${p}-${date}`).value);
+    if(!isNaN(v))data[p]=v;
+  });
+  data.winner=document.getElementById(`eW-${date}`).value||'';
+  try{
+    await db.ref('historical/'+date.replace(/-/g,'_')).update(data);
+    alert('✅ Gespeichert!');
+  }catch(e){alert('Fehler: '+e.message);}
+}
+
+async function adminAddRow(){
+  const date=document.getElementById('aDate').value;
+  if(!date){alert('Bitte Datum eingeben.');return;}
+  if(HISTORICAL.find(r=>r.date===date)){alert('Dieser Eintrag existiert bereits. Bitte direkt in der Tabelle bearbeiten.');return;}
+  const data={date};
+  let hasData=false;
+  PLAYERS.forEach(p=>{
+    const v=parseFloat(document.getElementById('a'+p).value);
+    if(!isNaN(v)){data[p]=v;hasData=true;}
+  });
+  if(!hasData){alert('Bitte mindestens ein Gewicht eingeben.');return;}
+  data.winner=document.getElementById('aWinner').value||'';
+  try{
+    await db.ref('historical/'+date.replace(/-/g,'_')).set(data);
+    alert('✅ Runde hinzugefügt!');
+    renderAdmin();
+  }catch(e){alert('Fehler: '+e.message);}
 }
 
 document.getElementById('loginPass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
