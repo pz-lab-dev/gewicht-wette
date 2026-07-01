@@ -2,8 +2,22 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>GewichtWette</title>
+
+<!-- PWA: App-Verhalten -->
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="GewichtWette">
+<meta name="application-name" content="GewichtWette">
+<meta name="theme-color" content="#1baf7a">
+
+<!-- PWA: Icons für iPhone/Android -->
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%231baf7a'/%3E%3Ctext x='90' y='115' font-family='system-ui,sans-serif' font-size='90' font-weight='700' text-anchor='middle' fill='white'%3EW%3C/text%3E%3C/svg%3E">
+
+<!-- PWA Manifest (inline) -->
+<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22GewichtWette%22%2C%22short_name%22%3A%22GewichtWette%22%2C%22description%22%3A%22Die+Wette+l%C3%A4uft+%E2%80%94+Abnehmen+oder+zahlen.%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23f5f4f0%22%2C%22theme_color%22%3A%22%231baf7a%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%2520xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%2520viewBox%3D'0%25200%2520192%2520192'%253E%253Crect%2520width%3D'192'%2520height%3D'192'%2520rx%3D'48'%2520fill%3D'%25231baf7a'%2F%253E%253Ctext%2520x%3D'96'%2520y%3D'130'%2520font-family%3D'system-ui'%2520font-size%3D'110'%2520font-weight%3D'700'%2520text-anchor%3D'middle'%2520fill%3D'white'%253EW%253C%2Ftext%253E%253C%2Fsvg%253E%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%5D%7D">
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
@@ -25,7 +39,8 @@
     }
   }
   *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;min-height:100dvh;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
+  .topbar{padding-top:max(12px,env(safe-area-inset-top))}
   .hidden{display:none!important}
 
   #loginScreen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:24px}
