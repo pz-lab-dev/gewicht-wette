@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="GewichtWette">
 <meta name="theme-color" content="#1baf7a">
-<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%231baf7a'/%3E%3Ctext x='90' y='115' font-family='system-ui,sans-serif' font-size='90' font-weight='700' text-anchor='middle' fill='white'%3EW%3C/text%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect width='180' height='180' rx='38' fill='%231baf7a'/><rect x='50' y='28' width='80' height='7' rx='3' fill='rgba(255,255,255,0.3)'/><circle cx='90' cy='31' r='5' fill='rgba(255,255,255,0.55)'/><rect x='87' y='36' width='6' height='55' rx='3' fill='white'/><line x1='35' y1='68' x2='145' y2='68' stroke='white' stroke-width='5' stroke-linecap='round'/><line x1='43' y1='68' x2='33' y2='96' stroke='white' stroke-width='4' stroke-linecap='round'/><ellipse cx='33' cy='103' rx='22' ry='13' fill='rgba(255,255,255,0.25)' stroke='white' stroke-width='3'/><text x='33' y='107' text-anchor='middle' font-family='system-ui' font-size='10' font-weight='700' fill='white'>-2.4</text><line x1='137' y1='68' x2='147' y2='86' stroke='white' stroke-width='4' stroke-linecap='round'/><ellipse cx='147' cy='93' rx='22' ry='13' fill='rgba(255,255,255,0.1)' stroke='rgba(255,255,255,0.5)' stroke-width='3'/><text x='147' y='97' text-anchor='middle' font-family='system-ui' font-size='10' font-weight='700' fill='rgba(255,255,255,0.75)'>+0.8</text><rect x='72' y='146' width='36' height='8' rx='3' fill='rgba(0,0,0,0.2)'/><text x='90' y='141' text-anchor='middle' font-family='system-ui' font-size='32' font-weight='800' fill='white'>GW</text></svg>">
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
@@ -21,8 +21,6 @@
   --border:rgba(0,0,0,.10);--border-strong:rgba(0,0,0,.18);
   --text:#0b0b0b;--text2:#52514e;--text3:#898781;
   --radius:8px;--shadow:0 1px 4px rgba(0,0,0,.07);
-  --sat:env(safe-area-inset-top);--sab:env(safe-area-inset-bottom);
-  --sal:env(safe-area-inset-left);--sar:env(safe-area-inset-right);
 }
 @media(prefers-color-scheme:dark){:root{
   --bg:#141413;--surface:#1e1e1c;--surface2:#252523;
@@ -32,19 +30,10 @@
 }}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html{height:100%}
-body{
-  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-  background:var(--bg);color:var(--text);
-  min-height:100vh;min-height:100dvh;
-  padding-top:env(safe-area-inset-top);
-  padding-left:env(safe-area-inset-left);
-  padding-right:env(safe-area-inset-right);
-  font-size:16px; /* base: prevents zoom on input focus on iOS */
-}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100dvh;padding-top:env(safe-area-inset-top);padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right);font-size:16px}
 .hidden{display:none!important}
-input,select,textarea{font-size:16px!important} /* prevent iOS zoom */
+input,select,textarea{font-size:16px!important}
 
-/* ── LOGIN ── */
 #loginScreen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100dvh;gap:20px;padding:20px}
 .login-logo{font-size:clamp(28px,8vw,40px);font-weight:700;letter-spacing:-1.5px}
 .login-logo span{color:var(--green)}
@@ -52,37 +41,20 @@ input,select,textarea{font-size:16px!important} /* prevent iOS zoom */
 .login-card{background:var(--surface);border:0.5px solid var(--border);border-radius:16px;padding:24px;width:100%;max-width:340px;display:flex;flex-direction:column;gap:14px;box-shadow:var(--shadow)}
 .login-card h2{font-size:16px;font-weight:600}
 .field label{font-size:12px;color:var(--text3);display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px}
-.field select,.field input[type=password],.field input[type=text],.field input[type=number],.field input[type=date]{
-  width:100%;padding:12px;border:0.5px solid var(--border-strong);border-radius:var(--radius);
-  background:var(--surface2);color:var(--text);outline:none;transition:border-color .15s;
-  min-height:44px; /* touch target */
-}
+.field select,.field input{width:100%;padding:12px;border:0.5px solid var(--border-strong);border-radius:var(--radius);background:var(--surface2);color:var(--text);outline:none;transition:border-color .15s;min-height:44px}
 .field select:focus,.field input:focus{border-color:var(--green)}
 .btn-green{width:100%;padding:13px;background:var(--green);color:#fff;border:none;border-radius:var(--radius);font-size:15px;font-weight:600;cursor:pointer;min-height:44px}
 .btn-green:active{background:var(--green-dark)}
 .err{color:var(--red);font-size:13px;text-align:center}
 
-/* ── TOPBAR ── */
-.topbar{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:12px 16px;
-  padding-left:max(16px,env(safe-area-inset-left));
-  padding-right:max(16px,env(safe-area-inset-right));
-  border-bottom:0.5px solid var(--border);background:var(--surface);
-  position:sticky;top:0;z-index:10;
-}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right));border-bottom:0.5px solid var(--border);background:var(--surface);position:sticky;top:0;z-index:10}
 .topbar-logo{font-size:17px;font-weight:700;letter-spacing:-.5px}
 .topbar-logo span{color:var(--green)}
 .topbar-right{display:flex;align-items:center;gap:8px}
 .user-pill{font-size:12px;font-weight:600;background:var(--green-light);color:var(--green-dark);padding:4px 10px;border-radius:20px;border:0.5px solid var(--green-border)}
 .logout-btn{font-size:12px;color:var(--text3);cursor:pointer;padding:6px 10px;border-radius:var(--radius);border:0.5px solid var(--border-strong);background:transparent;min-height:32px}
 
-/* ── COUNTDOWN ── */
-.countdown-bar{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:10px 16px;background:var(--surface2);border-bottom:0.5px solid var(--border);
-  flex-wrap:wrap;gap:8px;
-}
+.countdown-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:var(--surface2);border-bottom:0.5px solid var(--border);flex-wrap:wrap;gap:8px}
 .cd-left{display:flex;flex-direction:column;gap:1px}
 .cd-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px}
 .cd-date{font-size:13px;font-weight:600}
@@ -93,40 +65,37 @@ input,select,textarea{font-size:16px!important} /* prevent iOS zoom */
 .cd-sep{font-size:16px;color:var(--border-strong);margin-bottom:8px}
 .cd-today{font-size:13px;font-weight:600;color:var(--green);background:var(--green-light);padding:5px 12px;border-radius:20px;border:0.5px solid var(--green-border)}
 
-/* ── TABS ── */
 .tabs{display:flex;border-bottom:0.5px solid var(--border);background:var(--surface);overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .tabs::-webkit-scrollbar{display:none}
-.tab{padding:12px 14px;font-size:13px;font-weight:500;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-.5px;white-space:nowrap;min-height:44px;display:flex;align-items:center}
+.tab{padding:12px 14px;font-size:13px;font-weight:500;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-.5px;white-space:nowrap;min-height:44px;display:flex;align-items:center;gap:5px;position:relative}
 .tab.active{color:var(--green);border-bottom-color:var(--green)}
-.content{padding:16px;max-width:720px;margin:0 auto;padding-bottom:max(16px,env(safe-area-inset-bottom))}
+.tab-badge{position:absolute;top:8px;right:6px;background:var(--red);color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:10px;min-width:16px;text-align:center}
+.content{padding:16px;max-width:720px;margin:0 auto;padding-bottom:max(24px,env(safe-area-inset-bottom))}
 
-/* ── CARDS ── */
 .card{background:var(--surface);border:0.5px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px}
 .card h3{font-size:14px;font-weight:600;color:var(--text2);margin-bottom:12px}
 
-/* ── BANNERS ── */
 .banner{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;border-radius:var(--radius);margin-bottom:12px;flex-wrap:wrap}
 .banner.green{background:var(--green-light);border:0.5px solid var(--green-border)}
 .banner.amber{background:#faeeda;border:0.5px solid #fac775}
+.banner.blue{background:#e6f1fb;border:0.5px solid #b3d4f5}
 .banner p{font-size:13px}
 .banner.green p{color:var(--green-dark)}
 .banner.amber p{color:#854f0b}
+.banner.blue p{color:#185fa5}
 .wa-btn{display:inline-flex;align-items:center;gap:5px;background:#25D366;color:#fff;text-decoration:none;padding:8px 12px;border-radius:var(--radius);font-size:12px;font-weight:600;white-space:nowrap;min-height:36px}
 
-/* ── STATUS ── */
 .status-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
 .status-pill{display:flex;align-items:center;gap:5px;padding:6px 11px;border-radius:20px;font-size:12px;font-weight:500;background:var(--surface2);border:0.5px solid var(--border)}
 .dot{width:7px;height:7px;border-radius:50%}
 .dot-green{background:var(--green)}
 .dot-amber{background:var(--amber)}
 
-/* ── WEIGHT INPUT ── */
 .weight-input{padding:14px;border:0.5px solid var(--border-strong);border-radius:var(--radius);background:var(--surface2);color:var(--text);font-size:24px!important;font-weight:700;width:100%;outline:none}
 .weight-input:focus{border-color:var(--green)}
 .done-box{background:var(--green-light);border:0.5px solid var(--green-border);border-radius:var(--radius);padding:16px;text-align:center;color:var(--green-dark);font-size:14px;font-weight:500}
 .locked-box{background:var(--surface2);border:0.5px solid var(--border);border-radius:var(--radius);padding:14px;text-align:center;color:var(--text3);font-size:13px}
 
-/* ── TABLES ── */
 .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
 table{width:100%;border-collapse:collapse;font-size:13px}
 th{text-align:left;padding:7px 10px;color:var(--text3);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.4px;border-bottom:0.5px solid var(--border);white-space:nowrap}
@@ -141,54 +110,60 @@ tr:last-child td{border-bottom:none}
 .winner-tag{display:inline-block;background:var(--green-light);color:var(--green-dark);padding:2px 7px;border-radius:10px;font-size:11px;font-weight:600;border:0.5px solid var(--green-border);white-space:nowrap}
 .th-r{text-align:right}
 
-/* ── METRICS ── */
 .metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
 .metric{background:var(--surface2);border-radius:var(--radius);padding:12px}
 .metric-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
 .metric-val{font-size:18px;font-weight:700}
 
-/* ── FORMS ── */
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .full{grid-column:1/-1}
 .btn-sm{padding:11px 16px;background:var(--green);color:#fff;border:none;border-radius:var(--radius);font-size:14px;font-weight:600;cursor:pointer;margin-top:6px;min-height:44px;width:100%}
 .btn-sm:active{background:var(--green-dark)}
-.btn-danger{background:#e34948}
-.btn-danger:active{background:#b03030}
+.btn-outline{background:transparent;border:0.5px solid var(--border-strong);color:var(--text2)}
+.btn-outline:active{background:var(--surface2)}
 .loading{text-align:center;padding:40px;color:var(--text3);font-size:13px}
 
-/* ── ADMIN ── */
-.admin-row{display:flex;gap:8px;align-items:flex-end;margin-bottom:10px;flex-wrap:wrap}
-.admin-row .field{flex:1;min-width:70px}
-.admin-row .field label{font-size:10px}
-.admin-row .field input{padding:8px;min-height:36px}
+/* VOTING */
+.vote-card{background:var(--surface);border:0.5px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px}
+.vote-header{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:10px}
+.vote-date{font-size:15px;font-weight:600}
+.vote-note{font-size:12px;color:var(--text3);margin-top:2px}
+.vote-status{font-size:11px;color:var(--text3)}
+.vote-btns{display:flex;gap:8px}
+.vote-btn{flex:1;padding:10px;border:0.5px solid var(--border-strong);border-radius:var(--radius);font-size:13px;font-weight:600;cursor:pointer;background:var(--surface2);color:var(--text2);min-height:44px;transition:all .15s}
+.vote-btn.yes.active{background:var(--green-light);border-color:var(--green-border);color:var(--green-dark)}
+.vote-btn.no.active{background:#faece7;border-color:#f5c4b3;color:#993c1d}
+.vote-tally{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.tally-pill{font-size:11px;padding:3px 9px;border-radius:10px;font-weight:500}
+.tally-yes{background:var(--green-light);color:var(--green-dark);border:0.5px solid var(--green-border)}
+.tally-no{background:#faece7;color:#993c1d;border:0.5px solid #f5c4b3}
+.tally-open{background:var(--surface2);color:var(--text3);border:0.5px solid var(--border)}
+
+/* NOTIZ */
+.notiz-bubble{background:var(--surface2);border-radius:var(--radius);padding:8px 10px;font-size:12px;color:var(--text3);font-style:italic;margin-top:4px}
+
+/* ADMIN */
 .admin-badge{display:inline-block;background:#faeeda;color:#854f0b;border:0.5px solid #fac775;border-radius:10px;font-size:10px;font-weight:600;padding:2px 7px;margin-left:6px;vertical-align:middle}
 .edit-btn{background:none;border:0.5px solid var(--border-strong);border-radius:var(--radius);padding:4px 8px;font-size:11px;color:var(--text3);cursor:pointer;min-height:28px}
 .edit-btn:active{background:var(--surface2)}
 
-/* ── RESPONSIVE ── */
-@media(max-width:390px){
-  .metrics{grid-template-columns:repeat(2,1fr)}
-  .form-grid{grid-template-columns:1fr}
-  .full{grid-column:1}
-  .content{padding:12px}
-  .card{padding:14px}
-}
-@media(min-width:600px){
-  .content{padding:20px}
-  .card{padding:20px}
-}
+/* NOTIF BANNER */
+.notif-bar{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;background:var(--surface2);border-bottom:0.5px solid var(--border);font-size:12px;gap:10px}
+.notif-bar p{color:var(--text3)}
+.notif-btn{padding:5px 12px;background:var(--blue);color:#fff;border:none;border-radius:var(--radius);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap}
+
+@media(max-width:390px){.metrics{grid-template-columns:repeat(2,1fr)}.form-grid{grid-template-columns:1fr}.full{grid-column:1}.content{padding:12px}.card{padding:14px}}
+@media(min-width:600px){.content{padding:20px}.card{padding:20px}}
 </style>
 </head>
 <body>
 
-<!-- LOGIN -->
 <div id="loginScreen">
   <div class="login-logo">Gewicht<span>Wette</span></div>
   <div class="login-sub">Die Wette läuft — Abnehmen oder zahlen.</div>
   <div class="login-card">
     <h2>Anmelden</h2>
-    <div class="field">
-      <label>Spieler</label>
+    <div class="field"><label>Spieler</label>
       <select id="loginUser">
         <option value="">— auswählen —</option>
         <option value="PZu">PZu</option>
@@ -196,8 +171,7 @@ tr:last-child td{border-bottom:none}
         <option value="VBa">VBa</option>
       </select>
     </div>
-    <div class="field">
-      <label>Passwort</label>
+    <div class="field"><label>Passwort</label>
       <input type="password" id="loginPass" placeholder="••••••" autocomplete="current-password">
     </div>
     <div class="err hidden" id="loginErr"></div>
@@ -205,7 +179,6 @@ tr:last-child td{border-bottom:none}
   </div>
 </div>
 
-<!-- MAIN APP -->
 <div id="mainApp" class="hidden">
   <div class="topbar">
     <div class="topbar-logo">Gewicht<span>Wette</span></div>
@@ -214,17 +187,24 @@ tr:last-child td{border-bottom:none}
       <button class="logout-btn" onclick="doLogout()">Abmelden</button>
     </div>
   </div>
+  <div id="notifBar" class="notif-bar hidden">
+    <p>🔔 Erinnerungen am Wiegetag aktivieren?</p>
+    <button class="notif-btn" onclick="requestNotifPermission()">Aktivieren</button>
+    <button onclick="dismissNotifBar()" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:18px;padding:0 4px">×</button>
+  </div>
   <div class="countdown-bar" id="countdownBar"></div>
   <div class="tabs" id="tabBar">
     <div class="tab active" onclick="switchTab('eingabe',this)">⚖️ Gewicht</div>
     <div class="tab" onclick="switchTab('dashboard',this)">📊 Dashboard</div>
     <div class="tab" onclick="switchTab('essen',this)">🍽️ Essen</div>
+    <div class="tab" onclick="switchTab('voting',this)" id="votingTab">📅 Termine<span class="tab-badge hidden" id="voteBadge"></span></div>
     <div class="tab hidden" id="adminTab" onclick="switchTab('admin',this)">🔧 Admin</div>
   </div>
   <div class="content">
     <div id="tab-eingabe"></div>
     <div id="tab-dashboard" class="hidden"></div>
     <div id="tab-essen" class="hidden"></div>
+    <div id="tab-voting" class="hidden"></div>
     <div id="tab-admin" class="hidden"></div>
   </div>
 </div>
@@ -246,9 +226,8 @@ const USERS={PZu:{pass:'pzu123'},CSt:{pass:'chris123'},VBa:{pass:'vitalij123'}};
 const PLAYERS=['PZu','CSt','VBa'];
 const COLORS={PZu:'#2a78d6',CSt:'#1baf7a',VBa:'#eda100'};
 const FUTURE_DATES=['2025-08-31','2025-10-31','2025-12-31','2026-02-28','2026-04-30','2026-06-30','2026-08-31','2026-10-31','2026-12-31'];
-const CURRENT_ROUND='2025-08-31';
+let CURRENT_ROUND='2025-08-31';
 
-// Historische Basisdaten (ergänzbar via Admin)
 const BASE_HISTORICAL=[
   {date:'2023-06-01',PZu:87.4,CSt:85.1,VBa:116.2,winner:'CSt',restaurant:'bonabrasa',restaurantDate:''},
   {date:'2024-01-31',PZu:90,CSt:81.6,VBa:115.9,winner:'CSt',restaurant:'brisket',restaurantDate:'2025-03-26'},
@@ -263,20 +242,21 @@ const BASE_HISTORICAL=[
 ];
 
 let currentUser=null,charts={},cdTimer=null,submissions={};
-let HISTORICAL=[...BASE_HISTORICAL]; // wird aus Firebase überschrieben
+let HISTORICAL=[...BASE_HISTORICAL];
+let votingData={},notesData={};
 
 // ── Firebase ──────────────────────────────────────────────────────
 function startListening(){
-  // Gewichte der aktuellen Runde
-  db.ref('rounds/'+CURRENT_ROUND).on('value',snap=>{
-    submissions=snap.val()||{};
-    refreshActiveTab();
+  db.ref('config/currentRound').on('value',snap=>{
+    if(snap.val()) CURRENT_ROUND=snap.val();
+    db.ref('rounds/'+CURRENT_ROUND).on('value',snap2=>{
+      submissions=snap2.val()||{};
+      refreshActiveTab();
+    });
   });
-  // Historische Daten aus Firebase laden (Admin-Ergänzungen)
   db.ref('historical').on('value',snap=>{
     const fbData=snap.val();
     if(fbData){
-      // Merge: Firebase-Daten überschreiben/ergänzen BASE_HISTORICAL
       const map={};
       BASE_HISTORICAL.forEach(r=>map[r.date]={...r});
       Object.values(fbData).forEach(r=>{if(r&&r.date)map[r.date]={...map[r.date],...r}});
@@ -286,10 +266,18 @@ function startListening(){
     }
     refreshActiveTab();
   });
+  db.ref('voting').on('value',snap=>{
+    votingData=snap.val()||{};
+    updateVoteBadge();
+    refreshActiveTab();
+  });
+  db.ref('notes').on('value',snap=>{
+    notesData=snap.val()||{};
+    refreshActiveTab();
+  });
 }
 function stopListening(){
-  db.ref('rounds/'+CURRENT_ROUND).off();
-  db.ref('historical').off();
+  ['config/currentRound','rounds/'+CURRENT_ROUND,'historical','voting','notes'].forEach(p=>db.ref(p).off());
 }
 function refreshActiveTab(){
   const active=document.querySelector('.tab.active');
@@ -297,7 +285,37 @@ function refreshActiveTab(){
   const t=active.textContent;
   if(t.includes('Gewicht'))renderEingabe();
   else if(t.includes('Dashboard'))renderDashboard();
+  else if(t.includes('Essen'))renderEssen();
+  else if(t.includes('Termine'))renderVoting();
   else if(t.includes('Admin'))renderAdmin();
+}
+
+// ── Notifications ─────────────────────────────────────────────────
+function checkNotifPermission(){
+  if(!('Notification' in window))return;
+  if(Notification.permission==='default'){
+    document.getElementById('notifBar').classList.remove('hidden');
+  }
+  scheduleWiegetagNotif();
+}
+function dismissNotifBar(){document.getElementById('notifBar').classList.add('hidden');}
+async function requestNotifPermission(){
+  const result=await Notification.requestPermission();
+  dismissNotifBar();
+  if(result==='granted'){
+    new Notification('GewichtWette 🏆',{body:'Erinnerungen aktiviert! Du wirst am Wiegetag benachrichtigt.',icon:''});
+    scheduleWiegetagNotif();
+  }
+}
+function scheduleWiegetagNotif(){
+  if(Notification.permission!=='granted')return;
+  const today=new Date();today.setHours(0,0,0,0);
+  const round=new Date(CURRENT_ROUND+'T00:00:00');
+  if(today.getTime()===round.getTime()&&submissions[currentUser]===undefined){
+    setTimeout(()=>{
+      new Notification('⚖️ Wiegetag!',{body:`Heute ist Stichtag (${CURRENT_ROUND}). Bitte dein Gewicht in der GewichtWette App eingeben!`,requireInteraction:true});
+    },2000);
+  }
 }
 
 // ── Login ──────────────────────────────────────────────────────────
@@ -311,10 +329,10 @@ function doLogin(){
   document.getElementById('loginScreen').classList.add('hidden');
   document.getElementById('mainApp').classList.remove('hidden');
   document.getElementById('userPill').textContent=user;
-  // Admin-Tab nur für PZu
-  if(user==='PZu') document.getElementById('adminTab').classList.remove('hidden');
+  if(user==='PZu')document.getElementById('adminTab').classList.remove('hidden');
   startListening();
   startCountdown();
+  checkNotifPermission();
   switchTab('eingabe',document.querySelector('.tab'));
 }
 function showErr(msg){const e=document.getElementById('loginErr');e.textContent=msg;e.classList.remove('hidden');}
@@ -322,7 +340,7 @@ function doLogout(){
   stopListening();
   if(cdTimer)clearInterval(cdTimer);
   Object.values(charts).forEach(c=>{try{c.destroy();}catch{}});
-  charts={};currentUser=null;submissions={};HISTORICAL=[...BASE_HISTORICAL];
+  charts={};currentUser=null;submissions={};HISTORICAL=[...BASE_HISTORICAL];votingData={};notesData={};
   document.getElementById('mainApp').classList.add('hidden');
   document.getElementById('loginScreen').classList.remove('hidden');
   document.getElementById('loginPass').value='';
@@ -332,8 +350,11 @@ function doLogout(){
 
 // ── Countdown ──────────────────────────────────────────────────────
 function getNextDate(){
+  const all=[...FUTURE_DATES];
+  if(!all.includes(CURRENT_ROUND))all.push(CURRENT_ROUND);
+  all.sort();
   const now=new Date();now.setHours(0,0,0,0);
-  return FUTURE_DATES.map(d=>new Date(d+'T00:00:00')).find(d=>d>=now)||null;
+  return all.map(d=>new Date(d+'T00:00:00')).find(d=>d>=now)||null;
 }
 function startCountdown(){if(cdTimer)clearInterval(cdTimer);updateCountdown();cdTimer=setInterval(updateCountdown,1000);}
 function updateCountdown(){
@@ -345,6 +366,7 @@ function updateCountdown(){
   const dateStr=next.toLocaleDateString('de-CH',{day:'2-digit',month:'long',year:'numeric'});
   if(isToday){el.innerHTML=`<div class="cd-left"><div class="cd-label">Nächster Wiegetag</div><div class="cd-date">${dateStr}</div></div><div class="cd-today">🎯 Heute ist Wiegetag!</div>`;return;}
   const diff=next-new Date();
+  if(diff<0){el.innerHTML='';return;}
   const d=Math.floor(diff/86400000),h=Math.floor((diff%86400000)/3600000),m=Math.floor((diff%3600000)/60000),s=Math.floor((diff%60000)/1000);
   el.innerHTML=`<div class="cd-left"><div class="cd-label">Nächster Wiegetag</div><div class="cd-date">${dateStr}</div></div>
   <div class="cd-units">
@@ -362,11 +384,12 @@ function updateCountdown(){
 function switchTab(name,el){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   if(el)el.classList.add('active');
-  ['eingabe','dashboard','essen','admin'].forEach(t=>document.getElementById('tab-'+t).classList.add('hidden'));
+  ['eingabe','dashboard','essen','voting','admin'].forEach(t=>document.getElementById('tab-'+t).classList.add('hidden'));
   document.getElementById('tab-'+name).classList.remove('hidden');
   if(name==='eingabe')renderEingabe();
   else if(name==='dashboard')renderDashboard();
   else if(name==='essen')renderEssen();
+  else if(name==='voting'){renderVoting();clearVoteBadge();}
   else if(name==='admin')renderAdmin();
 }
 
@@ -374,6 +397,7 @@ function switchTab(name,el){
 function isInputDay(){const t=new Date();t.setHours(0,0,0,0);return t.getTime()===new Date(CURRENT_ROUND+'T00:00:00').getTime();}
 function allSubmitted(){return PLAYERS.every(p=>submissions[p]!==undefined);}
 function getPending(){return PLAYERS.filter(p=>submissions[p]===undefined);}
+function fmtDate(d){return d?new Date(d+'T00:00:00').toLocaleDateString('de-CH',{day:'2-digit',month:'short',year:'numeric'}):'';}
 
 // ── Gewichtstabelle ────────────────────────────────────────────────
 function buildWeightTable(){
@@ -385,16 +409,15 @@ function buildWeightTable(){
   rows.forEach((r,i)=>{
     const prev=rows[i+1];
     const isLatest=i===0;
+    const note=notesData[r.date.replace(/-/g,'_')];
     html+=`<tr style="${isLatest?'background:var(--surface2)':''}">`;
-    html+=`<td class="td-date">${r.date.slice(0,7)}${isLatest?' <span style="font-size:10px;color:var(--green);font-weight:700">NEU</span>':''}</td>`;
+    html+=`<td class="td-date">${r.date.slice(0,7)}${isLatest?' <span style="font-size:10px;color:var(--green);font-weight:700">NEU</span>':''}${note?'<div class="notiz-bubble">💬 '+note+'</div>':''}</td>`;
     PLAYERS.forEach(p=>{
       const w=r[p];
       if(w===undefined||w===null){html+=`<td class="td-w" style="color:var(--text3)">—</td>`;return;}
       let delta='';
       if(prev&&prev[p]!==undefined){
-        const d=w-prev[p];
-        const sign=d>0?'+':'';
-        const cls=d<0?'delta-neg':d>0?'delta-pos':'';
+        const d=w-prev[p];const sign=d>0?'+':'';const cls=d<0?'delta-neg':d>0?'delta-pos':'';
         delta=`<div class="td-delta ${cls}">${sign}${d.toFixed(1)}</div>`;
       }
       html+=`<td class="td-w${p===currentUser?' mine':''}">${w.toFixed(1)} kg${delta}</td>`;
@@ -412,21 +435,15 @@ function renderEingabe(){
   const allDone=allSubmitted();
   const pending=getPending();
   const inputDay=isInputDay();
-
   let topBanner='';
   if(!inputDay){
     const next=getNextDate();
     const ds=next?next.toLocaleDateString('de-CH',{day:'2-digit',month:'long',year:'numeric'}):'—';
     topBanner=`<div class="banner amber"><p>📅 Kein Eingabetag. Nächster Stichtag: <strong>${ds}</strong></p></div>`;
   }
-
   let statusRow='<div class="status-row">';
-  PLAYERS.forEach(p=>{
-    const done=submissions[p]!==undefined;
-    statusRow+=`<div class="status-pill"><span class="dot ${done?'dot-green':'dot-amber'}"></span>${p}: <strong>${done?'✓':'ausstehend'}</strong></div>`;
-  });
+  PLAYERS.forEach(p=>{const done=submissions[p]!==undefined;statusRow+=`<div class="status-pill"><span class="dot ${done?'dot-green':'dot-amber'}"></span>${p}: <strong>${done?'✓':'ausstehend'}</strong></div>`;});
   statusRow+='</div>';
-
   let reminder='';
   const others=pending.filter(p=>p!==currentUser);
   if(others.length>0&&inputDay){
@@ -434,7 +451,6 @@ function renderEingabe(){
     const msg=encodeURIComponent(`Hey ${names}! 💪 Bitte heute noch dein Gewicht eingeben. Stichtag: ${CURRENT_ROUND}`);
     reminder=`<div class="banner amber"><p>⏳ <strong>${names}</strong> noch nicht eingegeben.</p><a class="wa-btn" href="https://wa.me/?text=${msg}" target="_blank">💬 WhatsApp</a></div>`;
   }
-
   let inputArea='';
   if(!inputDay){
     inputArea=`<div class="card"><div class="locked-box">🔒 Eingabe nur am Stichtag (${CURRENT_ROUND}) möglich.</div></div>`;
@@ -446,7 +462,6 @@ function renderEingabe(){
       <input class="weight-input" type="number" id="wInput" step="0.1" min="30" max="300" placeholder="83.4" inputmode="decimal"></div>
       <button class="btn-green" onclick="saveWeight()">Gewicht speichern</button></div>`;
   }
-
   let reveal='';
   if(allDone){
     const prev=HISTORICAL[HISTORICAL.length-1];
@@ -462,10 +477,8 @@ function renderEingabe(){
   }else if(myDone){
     reveal=`<div class="card"><div class="locked-box">👁️ Gewichte sichtbar, sobald alle eingegeben haben.</div></div>`;
   }
-
   el.innerHTML=topBanner+statusRow+reminder+inputArea+reveal+buildWeightTable();
 }
-
 async function saveWeight(){
   const val=parseFloat(document.getElementById('wInput').value);
   if(!val||val<30){alert('Bitte ein gültiges Gewicht eingeben.');return;}
@@ -486,12 +499,14 @@ function renderDashboard(){
   const last=allRounds[allRounds.length-1],prev=allRounds[allRounds.length-2]||last;
   let bestDelta=Infinity,bestP='';
   PLAYERS.forEach(p=>{const d=(last[p]||0)-(prev[p]||0);if(d<bestDelta){bestDelta=d;bestP=p;}});
-
   el.innerHTML=`
     <div class="metrics">
       <div class="metric"><div class="metric-label">Gesamtsieger</div><div class="metric-val" style="font-size:15px">${topW[0]}<br><span style="font-size:11px;color:var(--text3)">${topW[1]} Siege</span></div></div>
       <div class="metric"><div class="metric-label">Letzte Runde</div><div class="metric-val" style="font-size:15px">${bestP}<br><span style="font-size:11px;color:var(--green)">${bestDelta<0?bestDelta.toFixed(1)+' kg':'-'}</span></div></div>
       <div class="metric"><div class="metric-label">Runden</div><div class="metric-val">${allRounds.length}</div></div>
+    </div>
+    <div class="card" style="display:flex;justify-content:flex-end;padding:10px 14px;margin-bottom:12px">
+      <button class="btn-sm btn-outline" style="width:auto;margin-top:0;padding:8px 16px;font-size:13px" onclick="exportCSV()">⬇️ CSV exportieren</button>
     </div>
     <div class="card"><h3>Gewichtsverlauf (kg)</h3>
       <div style="display:flex;gap:12px;margin-bottom:10px;flex-wrap:wrap">
@@ -512,19 +527,25 @@ function renderDashboard(){
       <table><thead><tr><th>Spieler</th><th>Siege</th></tr></thead><tbody>
         ${Object.entries(wins).sort((a,b)=>b[1]-a[1]).map(([p,w])=>`<tr><td>${p}${w===topW[1]?' <span class="winner-tag">🏆</span>':''}</td><td>${w}</td></tr>`).join('')}
       </tbody></table></div>`;
-
-  ['line','delta','total'].forEach(k=>{if(charts[k]){charts[k].destroy();}});
+  ['line','delta','total'].forEach(k=>{if(charts[k])charts[k].destroy();});
   const tc='#898781',gc='rgba(100,100,100,0.1)';
-
   charts.line=new Chart(document.getElementById('cLine'),{type:'line',data:{labels,datasets:PLAYERS.map(p=>({label:p,data:allRounds.map(r=>r[p]||null),borderColor:COLORS[p],backgroundColor:COLORS[p]+'15',tension:0.3,pointRadius:3,borderWidth:2}))},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:tc,font:{size:9},maxRotation:45},grid:{color:gc}},y:{ticks:{color:tc,callback:v=>v+'kg',font:{size:9}},grid:{color:gc}}}}});
-
-  const dLabels=labels.slice(1),deltas={};
-  PLAYERS.forEach(p=>{deltas[p]=[];});
+  const dLabels=labels.slice(1),deltas={};PLAYERS.forEach(p=>{deltas[p]=[];});
   for(let i=1;i<allRounds.length;i++)PLAYERS.forEach(p=>deltas[p].push(parseFloat(((allRounds[i][p]||0)-(allRounds[i-1][p]||0)).toFixed(1))));
   charts.delta=new Chart(document.getElementById('cDelta'),{type:'bar',data:{labels:dLabels,datasets:PLAYERS.map(p=>({label:p,data:deltas[p],backgroundColor:COLORS[p],borderRadius:2}))},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:tc,font:{size:9},maxRotation:45},grid:{color:gc}},y:{ticks:{color:tc,callback:v=>v+'kg',font:{size:9}},grid:{color:gc}}}}});
-
   const first=allRounds[0],totalD=PLAYERS.map(p=>parseFloat(((allRounds[allRounds.length-1][p]||0)-(first[p]||0)).toFixed(1)));
   charts.total=new Chart(document.getElementById('cTotal'),{type:'bar',data:{labels:PLAYERS,datasets:[{data:totalD,backgroundColor:totalD.map(v=>v<0?'#1baf7a':'#e34948'),borderRadius:3}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:tc,callback:v=>v+'kg',font:{size:9}},grid:{color:gc}},y:{ticks:{color:tc,font:{size:10}},grid:{color:gc}}}}});
+}
+
+function exportCSV(){
+  const allRounds=[...HISTORICAL];
+  if(allSubmitted())allRounds.push({date:CURRENT_ROUND,...submissions});
+  let csv='Datum,'+PLAYERS.join(',')+',Sieger\n';
+  allRounds.forEach(r=>{csv+=r.date+','+PLAYERS.map(p=>r[p]!==undefined?r[p]:'').join(',')+','+(r.winner||'')+'\n';});
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download='gewicht-wette.csv';a.click();
+  URL.revokeObjectURL(url);
 }
 
 // ── Tab: Essen ─────────────────────────────────────────────────────
@@ -567,32 +588,140 @@ async function saveEssen(){
   catch(e){alert('Fehler: '+e.message);}
 }
 
-// ── Tab: Admin (nur PZu) ───────────────────────────────────────────
+// ── Tab: Voting ────────────────────────────────────────────────────
+function updateVoteBadge(){
+  const badge=document.getElementById('voteBadge');
+  const proposals=Object.values(votingData).filter(v=>v&&v.status==='open');
+  const unvoted=proposals.filter(v=>!v.votes||v.votes[currentUser]===undefined);
+  if(unvoted.length>0){
+    badge.textContent=unvoted.length;
+    badge.classList.remove('hidden');
+  } else {
+    badge.classList.add('hidden');
+  }
+}
+function clearVoteBadge(){document.getElementById('voteBadge').classList.add('hidden');}
+
+function renderVoting(){
+  const el=document.getElementById('tab-voting');
+  const proposals=Object.entries(votingData)
+    .filter(([,v])=>v&&v.date)
+    .sort((a,b)=>b[1].createdAt-a[1].createdAt);
+  const isAdmin=currentUser==='PZu';
+  let html=``;
+  if(isAdmin){
+    html+=`<div class="card"><h3>➕ Terminvorschlag erstellen</h3>
+      <div class="form-grid">
+        <div class="field"><label>Vorgeschlagenes Datum</label><input type="date" id="vDate"></div>
+        <div class="field"><label>Notiz (optional)</label><input type="text" id="vNote" placeholder="z.B. Alternativtermin Aug"></div>
+      </div>
+      <button class="btn-sm" onclick="createProposal()">Vorschlag erstellen</button>
+    </div>`;
+  }
+  if(proposals.length===0){
+    html+=`<div class="card"><div class="locked-box">📅 Keine offenen Terminvorschläge.</div></div>`;
+  } else {
+    proposals.forEach(([key,v])=>{
+      const votes=v.votes||{};
+      const yesVoters=PLAYERS.filter(p=>votes[p]==='yes');
+      const noVoters=PLAYERS.filter(p=>votes[p]==='no');
+      const openVoters=PLAYERS.filter(p=>votes[p]===undefined);
+      const myVote=votes[currentUser];
+      const isClosed=v.status==='closed';
+      html+=`<div class="vote-card">
+        <div class="vote-header">
+          <div>
+            <div class="vote-date">${fmtDate(v.date)} ${isClosed?'<span style="font-size:11px;color:var(--text3)">(abgeschlossen)</span>':''}</div>
+            ${v.note?`<div class="vote-note">${v.note}</div>`:''}
+          </div>
+          ${isAdmin&&!isClosed?`<button class="edit-btn" onclick="closeProposal('${key}','${v.date}')">✓ Annehmen</button>`:''}
+        </div>
+        ${!isClosed?`<div class="vote-btns">
+          <button class="vote-btn yes${myVote==='yes'?' active':''}" onclick="castVote('${key}','yes')">✅ Passt mir</button>
+          <button class="vote-btn no${myVote==='no'?' active':''}" onclick="castVote('${key}','no')">❌ Passt nicht</button>
+        </div>`:''}
+        <div class="vote-tally">
+          ${yesVoters.map(p=>`<span class="tally-pill tally-yes">✅ ${p}</span>`).join('')}
+          ${noVoters.map(p=>`<span class="tally-pill tally-no">❌ ${p}</span>`).join('')}
+          ${openVoters.map(p=>`<span class="tally-pill tally-open">⏳ ${p}</span>`).join('')}
+        </div>
+        ${isAdmin&&isClosed?`<button class="btn-sm btn-outline" style="width:auto;margin-top:8px;padding:6px 12px;font-size:12px" onclick="deleteProposal('${key}')">🗑 Löschen</button>`:''}
+      </div>`;
+    });
+  }
+  el.innerHTML=html;
+}
+
+async function createProposal(){
+  const date=document.getElementById('vDate').value;
+  const note=document.getElementById('vNote').value.trim();
+  if(!date){alert('Bitte Datum wählen.');return;}
+  try{
+    await db.ref('voting/'+date.replace(/-/g,'_')).set({date,note,status:'open',createdAt:Date.now(),votes:{}});
+    document.getElementById('vDate').value='';
+    document.getElementById('vNote').value='';
+  }catch(e){alert('Fehler: '+e.message);}
+}
+async function castVote(key,vote){
+  try{await db.ref(`voting/${key}/votes/${currentUser}`).set(vote);}
+  catch(e){alert('Fehler: '+e.message);}
+}
+async function closeProposal(key,date){
+  if(!confirm(`Diesen Termin (${fmtDate(date)}) als neuen Stichtag übernehmen?`))return;
+  try{
+    await db.ref(`voting/${key}/status`).set('closed');
+    await db.ref('config/currentRound').set(date);
+    alert('✅ Stichtag auf '+date+' gesetzt!');
+  }catch(e){alert('Fehler: '+e.message);}
+}
+async function deleteProposal(key){
+  if(!confirm('Diesen Vorschlag löschen?'))return;
+  try{await db.ref('voting/'+key).remove();}
+  catch(e){alert('Fehler: '+e.message);}
+}
+
+// ── Tab: Notizen (in Tabelle) ──────────────────────────────────────
+// Notizen werden im Admin eingetragen und in der Tabelle angezeigt
+
+// ── Tab: Admin ─────────────────────────────────────────────────────
 function renderAdmin(){
   if(currentUser!=='PZu'){document.getElementById('tab-admin').innerHTML='<div class="locked-box">🔒 Kein Zugriff.</div>';return;}
   const el=document.getElementById('tab-admin');
   const rows=[...HISTORICAL].reverse();
-
   let rowsHTML='';
   rows.forEach(r=>{
+    const note=notesData[r.date.replace(/-/g,'_')]||'';
     rowsHTML+=`<tr id="row-${r.date}">
       <td class="td-date">${r.date.slice(0,7)}</td>
       ${PLAYERS.map(p=>`<td class="td-w">${r[p]!==undefined?r[p].toFixed(1):'—'}</td>`).join('')}
       <td>${r.winner?`<span class="winner-tag">${r.winner}</span>`:'—'}</td>
+      <td style="font-size:11px;color:var(--text3);max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${note||'—'}</td>
       <td><button class="edit-btn" onclick="editRow('${r.date}')">✏️</button></td>
     </tr>`;
   });
-
   el.innerHTML=`
     <div class="card">
       <h3>🔧 Admin <span class="admin-badge">Nur PZu</span></h3>
-      <p style="font-size:13px;color:var(--text3);margin-bottom:14px">Hier kannst du historische Daten bearbeiten und neue Runden hinzufügen. Alle Änderungen werden in Firebase gespeichert.</p>
 
-      <h3 style="margin-bottom:10px">➕ Neue Runde hinzufügen</h3>
+      <h3 style="margin-bottom:10px">📅 Stichtag verschieben</h3>
+      <p style="font-size:13px;color:var(--text3);margin-bottom:10px">Aktueller Stichtag: <strong style="color:var(--text)">${CURRENT_ROUND}</strong></p>
       <div class="form-grid">
-        <div class="field full"><label>Datum (YYYY-MM-DD)</label><input type="date" id="aDate"></div>
+        <div class="field"><label>Neuer Stichtag</label><input type="date" id="newRoundDate" value="${CURRENT_ROUND}"></div>
+        <div class="field"><label>Grund (optional)</label><input type="text" id="newRoundReason" placeholder="z.B. Urlaub VBa"></div>
+      </div>
+      <div style="background:#faeeda;border:0.5px solid #fac775;border-radius:var(--radius);padding:10px 12px;margin:10px 0;font-size:12px;color:#854f0b">
+        ⚠️ Bisherige Eingaben dieser Runde bleiben erhalten. Alle sehen den neuen Stichtag sofort.
+      </div>
+      <button class="btn-sm" onclick="adminShiftDeadline()">Stichtag speichern</button>
+    </div>
+
+    <div class="card">
+      <h3>➕ Neue Runde hinzufügen</h3>
+      <div class="form-grid">
+        <div class="field full"><label>Datum</label><input type="date" id="aDate"></div>
         ${PLAYERS.map(p=>`<div class="field"><label>${p} (kg)</label><input type="number" id="a${p}" step="0.1" min="30" max="300" placeholder="0.0" inputmode="decimal"></div>`).join('')}
         <div class="field"><label>Sieger</label><select id="aWinner"><option value="">— keiner —</option>${PLAYERS.map(p=>`<option>${p}</option>`).join('')}</select></div>
+        <div class="field full"><label>Notiz (optional)</label><input type="text" id="aNote" placeholder="z.B. hatte Urlaub"></div>
       </div>
       <button class="btn-sm" onclick="adminAddRow()">Runde hinzufügen</button>
     </div>
@@ -600,7 +729,7 @@ function renderAdmin(){
     <div class="card">
       <h3>📋 Historische Daten bearbeiten</h3>
       <div class="table-wrap"><table>
-        <thead><tr><th>Datum</th>${PLAYERS.map(p=>`<th class="th-r">${p}</th>`).join('')}<th>Sieger</th><th></th></tr></thead>
+        <thead><tr><th>Datum</th>${PLAYERS.map(p=>`<th class="th-r">${p}</th>`).join('')}<th>Sieger</th><th>Notiz</th><th></th></tr></thead>
         <tbody id="adminTableBody">${rowsHTML}</tbody>
       </table></div>
     </div>`;
@@ -609,14 +738,15 @@ function renderAdmin(){
 function editRow(date){
   const r=HISTORICAL.find(x=>x.date===date);
   if(!r)return;
-  const tbody=document.getElementById('adminTableBody');
+  const note=notesData[date.replace(/-/g,'_')]||'';
   const row=document.getElementById('row-'+date);
   row.innerHTML=`
     <td class="td-date" style="font-size:11px">${date.slice(0,7)}</td>
-    ${PLAYERS.map(p=>`<td><input type="number" id="e${p}-${date}" value="${r[p]||''}" step="0.1" min="30" max="300" style="width:60px;padding:4px 6px;border:0.5px solid var(--border-strong);border-radius:4px;background:var(--surface2);color:var(--text);font-size:12px" inputmode="decimal"></td>`).join('')}
+    ${PLAYERS.map(p=>`<td><input type="number" id="e${p}-${date}" value="${r[p]||''}" step="0.1" min="30" max="300" style="width:58px;padding:4px 6px;border:0.5px solid var(--border-strong);border-radius:4px;background:var(--surface2);color:var(--text);font-size:12px" inputmode="decimal"></td>`).join('')}
     <td><select id="eW-${date}" style="padding:4px 6px;border:0.5px solid var(--border-strong);border-radius:4px;background:var(--surface2);color:var(--text);font-size:12px">
       <option value="">—</option>${PLAYERS.map(p=>`<option${r.winner===p?' selected':''}>${p}</option>`).join('')}
     </select></td>
+    <td><input type="text" id="eN-${date}" value="${note}" placeholder="Notiz" style="width:80px;padding:4px 6px;border:0.5px solid var(--border-strong);border-radius:4px;background:var(--surface2);color:var(--text);font-size:11px"></td>
     <td style="display:flex;gap:4px">
       <button class="edit-btn" style="background:var(--green);color:#fff;border-color:var(--green)" onclick="saveRow('${date}')">✓</button>
       <button class="edit-btn" onclick="renderAdmin()">✕</button>
@@ -625,31 +755,43 @@ function editRow(date){
 
 async function saveRow(date){
   const data={date};
-  PLAYERS.forEach(p=>{
-    const v=parseFloat(document.getElementById(`e${p}-${date}`).value);
-    if(!isNaN(v))data[p]=v;
-  });
+  PLAYERS.forEach(p=>{const v=parseFloat(document.getElementById(`e${p}-${date}`).value);if(!isNaN(v))data[p]=v;});
   data.winner=document.getElementById(`eW-${date}`).value||'';
+  const note=document.getElementById(`eN-${date}`).value.trim();
   try{
     await db.ref('historical/'+date.replace(/-/g,'_')).update(data);
+    if(note) await db.ref('notes/'+date.replace(/-/g,'_')).set(note);
+    else await db.ref('notes/'+date.replace(/-/g,'_')).remove();
     alert('✅ Gespeichert!');
+  }catch(e){alert('Fehler: '+e.message);}
+}
+
+async function adminShiftDeadline(){
+  const newDate=document.getElementById('newRoundDate').value;
+  const reason=document.getElementById('newRoundReason').value.trim();
+  if(!newDate){alert('Bitte ein Datum wählen.');return;}
+  if(newDate===CURRENT_ROUND){alert('Das ist bereits der aktuelle Stichtag.');return;}
+  if(!confirm(`Stichtag von ${CURRENT_ROUND} auf ${newDate} verschieben?`))return;
+  try{
+    await db.ref('config/currentRound').set(newDate);
+    if(reason)await db.ref('config/lastShiftReason').set({from:CURRENT_ROUND,to:newDate,reason,by:'PZu',ts:Date.now()});
+    alert('✅ Stichtag verschoben auf '+newDate);
+    renderAdmin();
   }catch(e){alert('Fehler: '+e.message);}
 }
 
 async function adminAddRow(){
   const date=document.getElementById('aDate').value;
   if(!date){alert('Bitte Datum eingeben.');return;}
-  if(HISTORICAL.find(r=>r.date===date)){alert('Dieser Eintrag existiert bereits. Bitte direkt in der Tabelle bearbeiten.');return;}
-  const data={date};
-  let hasData=false;
-  PLAYERS.forEach(p=>{
-    const v=parseFloat(document.getElementById('a'+p).value);
-    if(!isNaN(v)){data[p]=v;hasData=true;}
-  });
+  if(HISTORICAL.find(r=>r.date===date)){alert('Eintrag existiert bereits. Bitte in der Tabelle bearbeiten.');return;}
+  const data={date};let hasData=false;
+  PLAYERS.forEach(p=>{const v=parseFloat(document.getElementById('a'+p).value);if(!isNaN(v)){data[p]=v;hasData=true;}});
   if(!hasData){alert('Bitte mindestens ein Gewicht eingeben.');return;}
   data.winner=document.getElementById('aWinner').value||'';
+  const note=document.getElementById('aNote').value.trim();
   try{
     await db.ref('historical/'+date.replace(/-/g,'_')).set(data);
+    if(note)await db.ref('notes/'+date.replace(/-/g,'_')).set(note);
     alert('✅ Runde hinzugefügt!');
     renderAdmin();
   }catch(e){alert('Fehler: '+e.message);}
